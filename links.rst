@@ -1,50 +1,6 @@
 Links
 =====
 
-Fully Python compliant
-----------------------
-
-* `PyPy <http://pypy.org/>`_
-* `Jython <http://www.jython.org/>`_ based on the JVM
-* `IronPython <http://ironpython.net/>`_ based on the .NET VM
-* `Unladen Swallow <http://code.google.com/p/unladen-swallow/>`_ fork of CPython 2.6 using LLVM
-
-  - `Unladen Swallow Retrospective
-    <http://qinsb.blogspot.com.au/2011/03/unladen-swallow-retrospective.html>`_
-  - `PEP 3146 <http://python.org/dev/peps/pep-3146/>`_
-
-
-Fully Python compliant??
-------------------------
-
-* `psyco <http://psyco.sourceforge.net/>`_
-
-Subset of Python to C++
-------------------------
-
-* `Nuitka <http://www.nuitka.net/pages/overview.html>`_
-* `Python2C <http://strout.net/info/coding/python/ai/python2c.py>`_
-* `Shedskin <http://code.google.com/p/shedskin/>`_
-* `pythran <https://github.com/serge-sans-paille/pythran>`_ (no class, set,
-  dict, exception, file handling, ...)
-
-Subset of Python
-----------------
-
-* `pymothoa <http://code.google.com/p/pymothoa/>`_: use LLVM;
-  don't support classes nor exceptions.
-* `unpython <http://code.google.com/p/unpython/>`_: Python to C
-* `Perthon <http://perthon.sourceforge.net/>`_: Python to Perl
-* `Copperhead <http://copperhead.github.com/>`_: Python to GPU (Nvidia)
-
-Language very close to Python
------------------------------
-
-* `Cython <http://www.cython.org/>`_: "Cython is a programming language based
-  on Python, with extra syntax allowing for optional static type declarations."
-
-  - based on `Pyrex <http://www.cosc.canterbury.ac.nz/greg.ewing/python/Pyrex/>`_
-
 Misc links
 ----------
 
@@ -71,5 +27,10 @@ Misc links
 * `Volunteer developed free-threaded cross platform virtual machines?
   <http://www.boredomandlaziness.org/2012/07/volunteer-supported-free-threaded-cross.html>`_
 
+Other
+-----
 
+* `ASP <http://pypi.python.org/pypi/asp>`_:
+  ASP is a SEJITS (specialized embedded just-in-time compiler) toolkit for Python.
+* `PerformanceTips <http://wiki.python.org/moin/PythonSpeed/PerformanceTips/>`_
 
