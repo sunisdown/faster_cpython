@@ -152,3 +152,42 @@ a module in ``sys.modules``.
 The eventlet modules injects monkey-patched modules in ``sys.modules`` to
 convert I/O blocking operations to asynchronous operations using an event loop.
 
+
+Solutions
+=========
+
+Make strong assumptions, ignore changes
+---------------------------------------
+
+If the optimizer is an opt-in options, users are aware that the optimizer
+can make some compromises on the Python semantic to implement more aggressive
+optimizations.
+
+
+Static analysis
+---------------
+
+Analyze the code to ensure that functions don't mutate everything, for example
+ensure that a function is pure.
+
+Dummy example::
+
+    def func(x, y):
+        return x + y
+
+This function ``func()`` is pure: it has no side effect. This function will not
+override builtins, not modify local variables of the caller, etc. It is safe to
+call this function from anywhere.
+
+It is possible to analyze the code to check that an optimization can be
+enabled.
+
+
+Use guards checked at runtime
+-----------------------------
+
+For some optimizations, a static analysis cannot ensure that all assumptions
+required by an optimization will respected. Adding guards allows to check
+assumptions during the execution to use the optimized code or fallback to the
+original code.
+
