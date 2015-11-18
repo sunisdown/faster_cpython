@@ -1,3 +1,5 @@
+.. _ast-optimizers:
+
 *************
 AST Optimizer
 *************
@@ -13,18 +15,34 @@ called the "peepholer" and is written in the C language.
 Old AST optimizer project
 =========================
 
-https://bitbucket.org/haypo/astoptimizer/ was a first attempt to optimize
-Python. This project was rejected by the Python community because it breaks the
-Python semantic. For example, it replaces ``len("abc")`` with ``3``. It checks
-that ``len()`` was not overriden in the module, but it doesn't check that the
-builtin ``len()`` function was not overriden.
+See :ref:`old AST optimizer <old-ast-optimizer>`.
+
 
 New AST optimizer combined with FAT Python
 ==========================================
 
-The :ref:`FAT Python <fatpython>` project provides guards checks at runtime. It
-comes with an AST optimizer which produces guards to disable optimizations if
-any assumption is no more true.
+See :ref:`new AST optimizer <new-ast-optimizer>`.
+
+
+PyPy AST optimizer
+==================
+
+xxx
+
+
+Cython AST optimizer
+====================
+
+https://mail.python.org/pipermail/python-dev/2012-August/121300.html
+
+* `Compiler/Optimize.py
+  <https://github.com/cython/cython/blob/master/Cython/Compiler/Optimize.py>`_
+* `Compiler/ParseTreeTransforms.py
+  <https://github.com/cython/cython/blob/master/Cython/Compiler/ParseTreeTransforms.py>`_
+* `Compiler/Builtin.py
+  <https://github.com/cython/cython/blob/master/Cython/Compiler/Builtin.py>`_
+* `Compiler/Pipeline.py
+  <https://github.com/cython/cython/blob/master/Cython/Compiler/Pipeline.py#L123>`_
 
 
 Links

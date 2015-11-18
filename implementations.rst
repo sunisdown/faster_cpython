@@ -19,16 +19,7 @@ Faster Python implementations
 * `pymothoa <http://code.google.com/p/pymothoa/>`_ uses LLVM
   ("don't support classes nor exceptions")
 * `WPython <http://code.google.com/p/wpython/>`_: 16-bit word-codes instead of byte-codes
-* `Cython <http://www.cython.org/>`_:
-
-  * `Compiler/Optimize.py
-    <https://github.com/cython/cython/blob/master/Cython/Compiler/Optimize.py>`_
-  * `Compiler/ParseTreeTransforms.py
-    <https://github.com/cython/cython/blob/master/Cython/Compiler/ParseTreeTransforms.py>`_
-  * `Compiler/Builtin.py
-    <https://github.com/cython/cython/blob/master/Cython/Compiler/Builtin.py>`_
-  * `Compiler/Pipeline.py
-    <https://github.com/cython/cython/blob/master/Cython/Compiler/Pipeline.py#L123>`_
+* `Cython <http://www.cython.org/>`_
 
 Fully Python compliant
 ----------------------

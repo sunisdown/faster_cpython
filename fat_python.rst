@@ -29,7 +29,7 @@ More information: `FATPYTHON.rst
 Test FAT Python
 ===============
 
-Download FAT Python with:
+Download FAT Python with::
 
     hg clone http://hg.python.org/sandbox/fatpython
 
@@ -238,15 +238,7 @@ ensure that the environment was not modified. We will call these checks
 First attempt: "modified" and "readonly" flags
 ----------------------------------------------
 
-A first attempt to implement guards was the `readonly PoC
-<https://hg.python.org/sandbox/readonly>`_ (fork of CPython) which registered
-callbacks to notify all guards. The problem is that modifying a watched
-dictionary gets a complexity of O(n) where n is the number of registered
-guards.
-
-readonly adds a ``modified`` flag to types and a ``readonly`` property to
-dictionaries. The guard was notified with the modified key to decide to disable
-or not the optimization.
+See :ref:`read-only Python <readonly>`.
 
 
 New try: versionned dictionary
@@ -510,6 +502,8 @@ Effect of FAT Python
 
 astoptimizer
 ============
+
+See :ref:`AST optimizer <new-ast-optimizer>`.
 
 * Lib/astoptimizer.py
 * add sys.asthook
