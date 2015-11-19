@@ -469,27 +469,25 @@ Possible worse performance:
 FAT Python API
 ==============
 
-* func.specialize(function[, guards: list]) -> func_index:
-  guards a list of dict. Guards:
+* func.specialize(bytecode[, guards: list]): add a specialized bytecode.
+  If bytecode is a function, uses its __code__ attribute.
+  Guards a list of dict, syntax of one guard:
 
   - {'guard_type': 'func', 'func': func2}:
     guard on func2.__code__
+  - {'guard_type': 'dict', 'dict': ns, 'key': key}:
+    guard on the versionned dictionary ns[key]
   - {'guard_type': 'builtins', 'name': 'len'}:
     guard on builtins.__dict__['len']
   - {'guard_type': 'globals', 'name': 'obj'}:
     guard on globals()['obj']
+  - {'guard_type': 'type_dict', 'type': MyClass, 'key': attr}:
+    guard on MyClass.__dict__[key]
   - {'guard_type': 'type', 'type': MyClass, 'key': 'attr'}:
     guard on MyClass.__dict__['attr']
   - {'guard_type': 'arg_type', 'arg_index': 0, 'type': str}:
     type of the function argument 0 must be str
 
-* func.specialize(bytecode[, guards: list]) -> func_index
-* func.add_arg_type_guard(func_index, arg_index, type)
-* func.add_builtin_guard(func_index, symbol): guard on getattr(builtins, key)
-* func.add_dict_guard(func_index, dict, key): guard on dict[key]
-* func.add_func_guard(func_index, func2): guard on func2.__code__
-* func.add_global_guard(func_index, key): guard on globals()[key]
-* func.add_type_dict_guard(func_index, type, key): guard on type.__dict__[key]
 * func.get_specialized()
 
 For dictionary and function guards: specialized functions are removed if the
