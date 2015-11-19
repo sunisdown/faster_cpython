@@ -37,6 +37,8 @@ Fully Python compliant
   - `PEP 3146
     <http://python.org/dev/peps/pep-3146/>`_
 
+* `Pyjion <https://github.com/microsoft/pyjion>`_
+
 
 Other
 -----
