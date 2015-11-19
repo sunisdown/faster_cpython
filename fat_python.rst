@@ -515,17 +515,3 @@ astoptimizer
 ============
 
 See :ref:`AST optimizer <new-ast-optimizer>`.
-
-* Lib/astoptimizer.py
-* add sys.asthook
-* PyParser_ASTFromStringObject() calls call_ast_hook()
-* Different .pyc filename:
-
-  - Lib/__pycache__/os.cpython-36.pyc: default mode
-  - Lib/__pycache__/os.cpython-36.fat-0.pyc: FAT mode
-
-
-Misc notes
-==========
-
-Optimizations are not disabled when tracing is enabled.

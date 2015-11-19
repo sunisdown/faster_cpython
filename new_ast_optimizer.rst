@@ -19,10 +19,16 @@ Files:
 * Lib/astoptimizer.py
 * Lib/test/test_astoptimizer.py
 * Python/sysmodule.c: add sys.asthook
+* PyParser_ASTFromStringObject() calls call_ast_hook()
 
 Other changes:
 
 * Lib/site.py: enable the AST optimizer in FAT mode
+
+Different .pyc filename:
+
+* Lib/__pycache__/os.cpython-36.pyc: default mode
+* Lib/__pycache__/os.cpython-36.fat-0.pyc: FAT mode
 
 
 FunctionOptimizer
