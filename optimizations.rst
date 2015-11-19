@@ -99,7 +99,7 @@ received.
 Release the GIL
 ===============
 
-Many methods of builtin types don't need the GIL. Example:
+Many methods of builtin types don't need the :ref:`GIL <gil>`. Example:
 ``"abc".startswith("def")``.
 
 
@@ -145,8 +145,10 @@ Peephole optimizer
 See :ref:`CPython peephole optimizer <cpython-peephole>`.
 
 
-Unroll loops
-============
+.. _loop-unroll:
+
+Loop unrolling
+==============
 
 Example::
 
@@ -180,6 +182,11 @@ Combined with other optimizations, the code can be simplified to::
     print('3')
     i = 3
 
+FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
+
+See also the Wikipedia article on `Loop unrolling
+<https://en.wikipedia.org/wiki/Loop_unrolling>`_.
+
 
 Remove dead code
 ================
@@ -206,6 +213,9 @@ Become::
         local_print("Hello World")
 
 Useful if ``hello()`` is compiled to C code.
+
+FAT Python implements a :ref:`copy builtins to constants optimization
+<fat-copy-builtin-to-constant>`.
 
 
 Don't create Python frames

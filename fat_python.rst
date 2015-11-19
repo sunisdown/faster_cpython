@@ -107,6 +107,11 @@ the specialized bytecode, add guards on the called builtin functions.
 The optimization is disabled when the builtin function is modified or if
 a variable with the same name is added to the global namespace of the function.
 
+The optimization on the builtin ``NAME`` requires two guards:
+
+* ``NAME`` key in builtin namespace
+* ``NAME`` key in global namespace
+
 Example::
 
     >>> def func():
@@ -118,10 +123,78 @@ Example::
                   3 RETURN_VALUE
 
 
+.. _fat-loop-unroll:
+
+Loop unrolling
+--------------
+
+Copy loop body N times instead of using a regular loop.
+
+The optimization requires two guards:
+
+* ``range`` key in builtin namespace
+* ``range`` key in global namespace
+
+Example::
+
+    >>> def func():
+    ...     for i in range(3):
+    ...         print(i)
+    ...
+    >>> dis.dis(func.get_specialized()[0]['code'])
+      1           0 LOAD_CONST               1 (0)
+                  3 STORE_FAST               0 (i)
+
+      3           6 LOAD_GLOBAL              0 (print)
+                  9 LOAD_FAST                0 (i)
+                 12 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
+                 15 POP_TOP
+
+    257          16 LOAD_CONST               2 (1)
+                 19 STORE_FAST               0 (i)
+
+    259          22 LOAD_GLOBAL              0 (print)
+                 25 LOAD_FAST                0 (i)
+                 28 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
+                 31 POP_TOP
+
+    513          32 LOAD_CONST               3 (2)
+                 35 STORE_FAST               0 (i)
+
+    515          38 LOAD_GLOBAL              0 (print)
+                 41 LOAD_FAST                0 (i)
+                 44 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
+                 47 POP_TOP
+                 48 LOAD_CONST               0 (None)
+                 51 RETURN_VALUE
+
+
+See :ref:`loop unrolling optimization <loop-unroll>`.
+
+
+.. _fat-copy-builtin-to-constant:
+
 Copy builtin functions to constants
 -----------------------------------
 
 Opt-in optimization to copy builtin functions to constants.
+
+The optimization on the builtin ``NAME`` requires two guards:
+
+* ``NAME`` key in builtin namespace
+* ``NAME`` key in global namespace
+
+Example::
+
+    >>> def func(a, b):
+    ...     return max(a, b)
+    ...
+    >>> dis.dis(func.get_specialized()[0]['code'])
+      2           0 LOAD_CONST               1 (<built-in function max>)
+                  3 LOAD_FAST                0 (a)
+                  6 LOAD_FAST                1 (b)
+                  9 CALL_FUNCTION            2 (2 positional, 0 keyword pair)
+                 12 RETURN_VALUE
 
 This optimization is disabled by default because it changes the Python
 semantic. Currently, astoptimizer is unable to guess if an instruction can
@@ -473,19 +546,19 @@ FAT Python API
   If bytecode is a function, uses its __code__ attribute.
   Guards a list of dict, syntax of one guard:
 
-  - {'guard_type': 'func', 'func': func2}:
+  - ``{'guard_type': 'func', 'func': func2}``:
     guard on func2.__code__
-  - {'guard_type': 'dict', 'dict': ns, 'key': key}:
+  - ``{'guard_type': 'dict', 'dict': ns, 'key': key}``:
     guard on the versionned dictionary ns[key]
-  - {'guard_type': 'builtins', 'name': 'len'}:
+  - ``{'guard_type': 'builtins', 'name': 'len'}``:
     guard on builtins.__dict__['len']
-  - {'guard_type': 'globals', 'name': 'obj'}:
+  - ``{'guard_type': 'globals', 'name': 'obj'}``:
     guard on globals()['obj']
-  - {'guard_type': 'type_dict', 'type': MyClass, 'key': attr}:
+  - ``{'guard_type': 'type_dict', 'type': MyClass, 'key': attr}``:
     guard on MyClass.__dict__[key]
-  - {'guard_type': 'type', 'type': MyClass, 'key': 'attr'}:
+  - ``{'guard_type': 'type', 'type': MyClass, 'key': 'attr'}``:
     guard on MyClass.__dict__['attr']
-  - {'guard_type': 'arg_type', 'arg_index': 0, 'type': str}:
+  - ``{'guard_type': 'arg_type', 'arg_index': 0, 'type': str}``:
     type of the function argument 0 must be str
 
 * func.get_specialized()
