@@ -161,14 +161,24 @@ loop::
         print(i+1)
     i = 3
 
-Or::
+Or the loop can be removed by duplicating the loop body::
 
-    print(0)
-    print(1)
-    print(2)
-    print(3)
+    i=0
+    print(i)
+    i=1
+    print(i)
+    i=2
+    print(i)
+    i=3
+    print(i)
+
+Combined with other optimizations, the code can be simplified to::
+
+    print('0')
+    print('1')
+    print('2')
+    print('3')
     i = 3
-
 
 
 Remove dead code
