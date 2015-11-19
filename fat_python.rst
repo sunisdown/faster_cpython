@@ -18,10 +18,14 @@ it will use two versions of some functions where one version is specialised to
 specific argument types, a specific environment, optimized when builtins are
 not mocked, etc.
 
-Thread on python-ideas: `Add specialized bytecode with guards to functions
-<https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>` (Oct
-2015).
+Threads on mailing lists:
 
+* [python-ideas] `Add specialized bytecode with guards to functions
+  <https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>`_
+  (Oct 2015)
+* [python-dev] `Second milestone of FAT Python
+  <https://mail.python.org/pipermail/python-dev/2015-November/142113.html>`_
+  (Nov 2015)
 
 More information: `FATPYTHON.rst
 <https://hg.python.org/sandbox/fatpython/file/tip/FATPYTHON.rst>`_.

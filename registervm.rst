@@ -1,3 +1,5 @@
+.. _registervm:
+
 +++++++++++++++++++++++++++++++++++++++++
 Register-based Virtual Machine for Python
 +++++++++++++++++++++++++++++++++++++++++
