@@ -4,6 +4,8 @@
 Kill the GIL?
 *************
 
+See the :ref:`Global Interpreter Lock <gil>`.
+
 Why does CPython need a global lock?
 ====================================
 

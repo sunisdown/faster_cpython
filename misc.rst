@@ -108,7 +108,7 @@ Why improving CPython instead of writing a new implementation?
 * CPython remains the reference implementation: new features are first
   implemented in CPython. For example, PyPy doesn't support Python 3 yet.
 * Important third party modules rely heavily on CPython implementation details,
-  especially the Python C API. Examples: numpy and PyQt.
+  especially the :ref:`Python C API <c-api>`. Examples: numpy and PyQt.
 
 
 Why not a JIT?

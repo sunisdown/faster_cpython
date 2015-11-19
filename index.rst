@@ -10,6 +10,7 @@ Contents:
    mutable.rst
    optimizations.rst
    bytecode.rst
+   c_api.rst
    ast_optimizer.rst
    new_ast_optimizer.rst
    old_ast_optimizer.rst
