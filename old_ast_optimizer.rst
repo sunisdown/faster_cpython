@@ -17,7 +17,9 @@ Threads on the Python-Dev mailing list:
 * `AST optimizer implemented in Python
   <https://mail.python.org/pipermail/python-dev/2012-August/121286.html>`_.
 * `Release of astoptimizer 0.3
-  <https://mail.python.org/pipermail/python-dev/2012-September/121647.html>`_
+  <https://mail.python.org/pipermail/python-dev/2012-September/121647.html>`_:
+  Guido van Rossum, Nick Coghlan and Maciej Fijalkowski complained that too
+  many optimizations broke the Python semantic
 
 
 Introduction

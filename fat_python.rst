@@ -26,6 +26,15 @@ Thread on python-ideas: `Add specialized bytecode with guards to functions
 More information: `FATPYTHON.rst
 <https://hg.python.org/sandbox/fatpython/file/tip/FATPYTHON.rst>`_.
 
+Origins
+=======
+
+* :ref:`Old AST optimizer project <old-ast-optimizer>`
+* :ref:`read-only Python <readonly>`
+* Dave Malcolm wrote a patch modifying eval.c to support specialized functions.
+  See the http://bugs.python.org/issue10399
+
+
 Test FAT Python
 ===============
 
