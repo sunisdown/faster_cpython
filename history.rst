@@ -14,6 +14,8 @@ History of Python optimizations
 * xxxx-xx-xx: Creation of Pyston project by xxx
 * 2012-09: Creation of the :ref:`AST optimizer <old-ast-optimizer>` project by
   Victor Stinner
+* 2012-11: Creation of the :ref:`registervm <registervm>` project by
+  Victor Stinner
 * 2014-05: Creation of :ref:`read-only Python <readonly>` PoC by Victor Stinner
 * 2015-10: Creation of the :ref:`FAT Python <fatpython>` project
   by Victor Stinner
