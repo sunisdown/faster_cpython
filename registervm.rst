@@ -11,6 +11,9 @@ stack-code bytecode
 More information: `REGISTERVM.txt
 <http://hg.python.org/sandbox/registervm/file/tip/REGISTERVM.txt>`_
 
+Thread on the Python-Dev mailing list: `Register-based VM for CPython
+<https://mail.python.org/pipermail/python-dev/2012-November/122777.html>`_.
+
 Status
 ======
 

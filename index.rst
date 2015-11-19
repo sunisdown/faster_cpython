@@ -8,6 +8,8 @@ Contents:
    :maxdepth: 2
 
    mutable.rst
+   optimizations.rst
+   bytecode.rst
    ast_optimizer.rst
    new_ast_optimizer.rst
    old_ast_optimizer.rst

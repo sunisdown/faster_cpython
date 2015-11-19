@@ -1,8 +1,8 @@
 .. _ast-optimizers:
 
-*************
-AST Optimizer
-*************
+**************
+AST Optimizers
+**************
 
 Intro
 =====
@@ -27,7 +27,7 @@ See :ref:`new AST optimizer <new-ast-optimizer>`.
 PyPy AST optimizer
 ==================
 
-xxx
+https://bitbucket.org/pypy/pypy/src/default/pypy/interpreter/astcompiler/optimize.py
 
 
 Cython AST optimizer
@@ -51,8 +51,6 @@ Links
 CPython issues
 --------------
 
-* `Issue #1346238 <http://bugs.python.org/issue1346238>`_:
-  A constant folding optimization pass for the AST
 * `Issue #2181 <http://bugs.python.org/issue2181>`_:
   optimize out local variables at end of function
 * `Issue #2499 <http://bugs.python.org/issue2499>`_:
@@ -61,8 +59,6 @@ CPython issues
   Patch: optimize code to use LIST_APPEND instead of calling list.append
 * `Issue #7682 <http://bugs.python.org/issue7682>`_:
   Optimisation of if with constant expression
-* `Issue #10399 <http://bugs.python.org/issue10399>`_:
-  AST Optimization: inlining of function calls
 * `Issue #11549 <http://bugs.python.org/issue11549>`_:
   Build-out an AST optimizer, moving some functionality out of the peephole optimizer
 * `Issue #17068 <http://bugs.python.org/issue17068>`_:
@@ -80,14 +76,3 @@ AST
   <http://svn.python.org/view/python/branches/tlee-ast-optimize/Python/optimize.c?view=log>`_
 * `ast-optimization-branch-elimination-in-generator-functions
   <http://grokbase.com/p/python/python-dev/0853rf4s1a/ast-optimization-branch-elimination-in-generator-functions>`_
-
-Bytecode
---------
-
-* `byteplay <http://code.google.com/p/byteplay/>`_
-* `diving-into-byte-code-optimization-in-python
-  <http://www.slideshare.net/cjgiridhar/diving-into-byte-code-optimization-in-python>`_
-* `BytecodeAssembler <http://pypi.python.org/pypi/BytecodeAssembler>`_
-* `ByteplayDoc <http://wiki.python.org/moin/ByteplayDoc>`_
-* `Hacking Python bytecode <http://geofft.mit.edu/blog/sipb/73>`_
-

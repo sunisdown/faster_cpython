@@ -12,8 +12,12 @@ Python semantic. For example, it replaces ``len("abc")`` with ``3``. It checks
 that ``len()`` was not overriden in the module, but it doesn't check that the
 builtin ``len()`` function was not overriden.
 
-Thread on the Python-Dev mailing list: `AST optimizer implemented in Python
-<https://mail.python.org/pipermail/python-dev/2012-August/121286.html>`_.
+Threads on the Python-Dev mailing list:
+
+* `AST optimizer implemented in Python
+  <https://mail.python.org/pipermail/python-dev/2012-August/121286.html>`_.
+* `Release of astoptimizer 0.3
+  <https://mail.python.org/pipermail/python-dev/2012-September/121647.html>`_
 
 
 Introduction
