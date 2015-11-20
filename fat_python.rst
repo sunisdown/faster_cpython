@@ -559,7 +559,8 @@ FAT Python API
   - ``{'guard_type': 'type', 'type': MyClass, 'key': 'attr'}``:
     guard on MyClass.__dict__['attr']
   - ``{'guard_type': 'arg_type', 'arg_index': 0, 'type': str}``:
-    type of the function argument 0 must be str
+    type of the function argument 0 must be str. As isinstance, *type* accepts
+    an iterable of types, ex: ``{..., 'type': (list, tuple)}``.
 
 * func.get_specialized()
 
