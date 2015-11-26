@@ -4,6 +4,23 @@
 FAT Python
 **********
 
+.. image:: fat_python.jpg
+   :alt: Three-year-old Cambodian boy Oeun Sambat hugs his best friend, a four-metre long female python named Chamreun
+   :align: right
+   :target: http://pictures.reuters.com/archive/CAMBODIA-PYTHONBOY-RP3DRIMPKQAA.html
+
+.. Source of the photo:
+   Three-year-old befriends python
+   Sit Tbow (Cambodia) May 22
+   Cambodians are flocking to see a three-year-old boy they believe was the son
+   of a dragon in his previous life because his best friend is a
+   four-metre-long python.
+   Curled up for an afternoon snooze inside the coils of his companion, the
+   child, Oeun Sambath, attracts regular visits from villagers anxious to make
+   use of what they believe are his supernatural powers. "He has been playing
+   with the python ever since he could first crawl," said his mother Kim
+   Kannara. Reuters
+
 Intro
 =====
 
