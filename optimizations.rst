@@ -163,7 +163,7 @@ loop::
         print(i+1)
     i = 3
 
-Or the loop can be removed by duplicating the loop body::
+Or the loop can be removed by duplicating the body for all loop iterations::
 
     i=0
     print(i)
@@ -184,7 +184,7 @@ Combined with other optimizations, the code can be simplified to::
 
 FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
 
-See also the Wikipedia article on `Loop unrolling
+Read also the `Wikipedia article on loop unrolling
 <https://en.wikipedia.org/wiki/Loop_unrolling>`_.
 
 
@@ -194,8 +194,10 @@ Remove dead code
 - ``if DEBUG: print("debug")`` where ``DEBUG`` is known to be False
 
 
-Load globals when the module is loaded
-======================================
+.. _load-global-optim:
+
+Load globals and builtins when the module is loaded
+===================================================
 
 Load globals when the module is loaded? Ex: load "print" name when the module
 is loaded.

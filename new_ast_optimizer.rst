@@ -4,12 +4,13 @@
 New AST Optimizer
 +++++++++++++++++
 
-The :ref:`FAT Python <fatpython>` projects comes with a new :ref:AST optimizer
+The :ref:`FAT Python <fat-python>` projects comes with a new :ref:`AST optimizer
 <ast-optimizers>` project.
 
-The :ref:`FAT Python <fatpython>` project provides guards checks at runtime. It
+The :ref:`FAT Python <fat-python>` project provides guards checks at runtime. It
 comes with an AST optimizer which produces guards to disable optimizations if
 any assumption is no more true.
+
 
 Implementation
 ==============
@@ -47,13 +48,18 @@ is optimized to::
 
     def func():
         return chr(65)
+
     if __fat__:
-        def _func_ast_optimized0():
+        _ast_optimized = func
+
+        def func():
             return "A"
-        func.specialize(_func_ast_optimized0)
-        del _func_ast_optimized0
-        func.add_builtin_guard(0, 'chr')
-        func.add_dict_guard(0, globals(), 'chr')
+        _ast_optimized.specialize(func,
+                                  [{'guard_type': 'builtins', 'name': 'chr'},
+                                   {'guard_type': 'globals', 'name': 'chr'})
+
+        func = _ast_optimized
+        del _ast_optimized
 
 
 Detection of free variables
@@ -66,4 +72,4 @@ node. It is used by the ``FunctionOptimizer`` to detect free variables.
 Corner cases
 ============
 
-Calling the ``super()`` function creates a closure.
+Calling the ``super()`` function requires a cell variables.

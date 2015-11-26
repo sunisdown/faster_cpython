@@ -1,4 +1,4 @@
-.. _fatpython:
+.. _fat-python:
 
 **********
 FAT Python
@@ -27,8 +27,8 @@ Threads on mailing lists:
   <https://mail.python.org/pipermail/python-dev/2015-November/142113.html>`_
   (Nov 2015)
 
-More information: `FATPYTHON.rst
-<https://hg.python.org/sandbox/fatpython/file/tip/FATPYTHON.rst>`_.
+The project was created in October 2015.
+
 
 Origins
 =======
@@ -128,48 +128,79 @@ Example::
 Loop unrolling
 --------------
 
-Copy loop body N times instead of using a regular loop.
+``for i in range(3): ...`` and ``for i in (1, 2, 3): ...`` are unrolled.
+By default, only loops with 16 iterations or less are optimized.
 
-The optimization requires two guards:
+.. note::
+   If ``break`` and/or ``continue`` instructions are used in the loop body,
+   the loop is not unrolled.
 
-* ``range`` key in builtin namespace
-* ``range`` key in global namespace
+See also the :ref:`loop unrolling optimization <loop-unroll>`.
 
-Example::
+tuple example
+^^^^^^^^^^^^^
 
-    >>> def func():
-    ...     for i in range(3):
-    ...         print(i)
-    ...
-    >>> dis.dis(func.get_specialized()[0]['code'])
-      1           0 LOAD_CONST               1 (0)
-                  3 STORE_FAST               0 (i)
+Example with a tuple::
 
-      3           6 LOAD_GLOBAL              0 (print)
-                  9 LOAD_FAST                0 (i)
-                 12 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
-                 15 POP_TOP
+    def func():
+        for i in ("hello", "world"):
+            pass
 
-    257          16 LOAD_CONST               2 (1)
-                 19 STORE_FAST               0 (i)
+Original bytecode::
 
-    259          22 LOAD_GLOBAL              0 (print)
-                 25 LOAD_FAST                0 (i)
-                 28 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
-                 31 POP_TOP
+    .     0 SETUP_LOOP              14 (to 17)
+          3 LOAD_CONST               3 (('hello', 'world'))
+          6 GET_ITER
 
-    513          32 LOAD_CONST               3 (2)
-                 35 STORE_FAST               0 (i)
+    >>    7 FOR_ITER                 6 (to 16)
+         10 STORE_FAST               0 (i)
 
-    515          38 LOAD_GLOBAL              0 (print)
-                 41 LOAD_FAST                0 (i)
-                 44 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
-                 47 POP_TOP
-                 48 LOAD_CONST               0 (None)
-                 51 RETURN_VALUE
+         13 JUMP_ABSOLUTE            7
+    >>   16 POP_BLOCK
+
+    >>   17 LOAD_CONST               0 (None)
+         20 RETURN_VALUE
 
 
-See :ref:`loop unrolling optimization <loop-unroll>`.
+FAT Python bytecode::
+
+    LOAD_CONST   1 ("hello")
+    STORE_FAST   0 (i)
+
+    LOAD_CONST   2 ("world")
+    STORE_FAST   0 (i)
+
+    LOAD_CONST   0 (None)
+    RETURN_VALUE
+
+The function has no specialized bytecode, the optimization is directly
+on the function. No guard is required.
+
+range example
+^^^^^^^^^^^^^
+
+Example with a ``range()``::
+
+    def func():
+        for i in (1, 2, 3):
+            print(i)
+
+This function is specialized to::
+
+    def func():
+        i = 1
+        print(i)
+
+        i = 2
+        print(i)
+
+        i = 3
+        print(i)
+
+The specialized bytecode requires two :ref:`guards <fat-guard>`:
+
+* ``range`` builtin variable
+* ``range`` global variable
 
 
 .. _fat-copy-builtin-to-constant:
@@ -177,7 +208,39 @@ See :ref:`loop unrolling optimization <loop-unroll>`.
 Copy builtin functions to constants
 -----------------------------------
 
-Opt-in optimization to copy builtin functions to constants.
+Opt-in optimization (disabled by default) to copy builtin functions to
+constants.
+
+Example::
+
+    def log(message):
+        print(message)
+
+    dis.dis(log)
+
+==================================================  ================================================
+Bytecode                                            Specialized bytecode
+==================================================  ================================================
+``LOAD_GLOBAL   0 (print)``                         ``LOAD_CONST      1 (<built-in function print>)``
+``LOAD_FAST     0 (message)``                       ``LOAD_FAST       0 (message)``
+``CALL_FUNCTION 1 (1 positional, 0 keyword pair)``  ``CALL_FUNCTION   1 (1 positional, 0 keyword pair)``
+``POP_TOP``                                         ``POP_TOP``
+``LOAD_CONST    0 (None)``                          ``LOAD_CONST      0 (None)``
+``RETURN_VALUE``                                    ``RETURN_VALUE``
+==================================================  ================================================
+
+The first ``LOAD_GLOBAL`` instruction is replaced with ``LOAD_CONST``.
+``LOAD_GLOBAL`` requires to lookup in the global namespace and then in the
+builtin namespaces, two dictionary lookups. ``LOAD_CONST`` gets the value from
+a C array, O(1) lookup.
+
+The specialized bytecode requires two :ref:`guards <fat-guard>`:
+
+* ``print`` builtin variable
+* ``print`` global variable
+
+The ``print()`` function is injected in the constants with the
+``func.patch_constants()`` method.
 
 The optimization on the builtin ``NAME`` requires two guards:
 
@@ -197,7 +260,10 @@ Example::
                  12 RETURN_VALUE
 
 This optimization is disabled by default because it changes the Python
-semantic. Currently, astoptimizer is unable to guess if an instruction can
+semantic: if the copied builtin function is replacd in the middle of the
+function, the specialized bytecode still uses the old builtin function.
+
+Currently, astoptimizer is unable to guess if an instruction can
 modify builtins functions or not. For example, the optimization changes the
 behaviour of the following function::
 
@@ -211,6 +277,9 @@ behaviour of the following function::
             print(len(x))   # expect: mock
         finally:
             builtins.len = _len
+
+See also the :ref:`load globals and builtins when the module is loaded
+<load-global-optim>` optimization.
 
 
 Goals
@@ -370,6 +439,8 @@ reference leaks and may keep objects alive longer than expected.
 For the same reason, the guard doesn't keep a strong reference to the
 dictionary, but a *weak* reference. It's not possible to create a weak
 reference to a dict, but it's possible to create a weak reference to a verdict.
+
+.. _fat-guard:
 
 Guards
 ------

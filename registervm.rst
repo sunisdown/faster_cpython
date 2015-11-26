@@ -16,6 +16,9 @@ More information: `REGISTERVM.txt
 Thread on the Python-Dev mailing list: `Register-based VM for CPython
 <https://mail.python.org/pipermail/python-dev/2012-November/122777.html>`_.
 
+The project was created in November 2012.
+
+
 Status
 ======
 

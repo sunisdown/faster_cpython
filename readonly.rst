@@ -23,6 +23,9 @@ More information: `READONLY.txt
 Thread on the python-ideas mailing list: `Make Python code read-only
 <https://mail.python.org/pipermail/python-ideas/2014-May/027870.html>`_.
 
+The project was mostly developed in May 2014. The project is now dead,
+replaced with :ref:`FAT Python <fat-python>`.
+
 READONLY
 ========
 

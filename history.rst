@@ -17,6 +17,6 @@ History of Python optimizations
 * 2012-11: Creation of the :ref:`registervm <registervm>` project by
   Victor Stinner
 * 2014-05: Creation of :ref:`read-only Python <readonly>` PoC by Victor Stinner
-* 2015-10: Creation of the :ref:`FAT Python <fatpython>` project
+* 2015-10: Creation of the :ref:`FAT Python <fat-python>` project
   by Victor Stinner
 
