@@ -47,15 +47,6 @@ Threads on mailing lists:
 The project was created in October 2015.
 
 
-Origins
-=======
-
-* :ref:`Old AST optimizer project <old-ast-optimizer>`
-* :ref:`read-only Python <readonly>`
-* Dave Malcolm wrote a patch modifying eval.c to support specialized functions.
-  See the http://bugs.python.org/issue10399
-
-
 Test FAT Python
 ===============
 
@@ -274,9 +265,10 @@ Example::
                   9 CALL_FUNCTION            2 (2 positional, 0 keyword pair)
                  12 RETURN_VALUE
 
-This optimization is disabled by default because it changes the Python
-semantic: if the copied builtin function is replacd in the middle of the
-function, the specialized bytecode still uses the old builtin function.
+This optimization is disabled by default because it changes the :ref:`Python
+semantic <fat-python-semantic>`: if the copied builtin function is replacd in
+the middle of the function, the specialized bytecode still uses the old builtin
+function.
 
 Currently, astoptimizer is unable to guess if an instruction can
 modify builtins functions or not. For example, the optimization changes the
@@ -295,6 +287,41 @@ behaviour of the following function::
 
 See also the :ref:`load globals and builtins when the module is loaded
 <load-global-optim>` optimization.
+
+
+Limitations and Python semantic
+===============================
+
+.. _fat-python-semantic:
+
+Python semantic
+---------------
+
+It is very hard, to not say impossible, to implementation and keep the exact
+behaviour of regular CPython. CPython implementation is used as the Python
+"standard". Since CPython is the most popular implementation, a Python
+implementation must do its best to mimic CPython behaviour. We will call it the
+Python semantic.
+
+FAT Python should not change the Python semantic with the default
+configuration.  Optimizations obvisouly the Python semantic must be disabled by
+default: opt-in options.
+
+As written above, it's really hard to mimic exactly CPython behaviour. For
+example, in CPython, it's technically possible to modify local variables of a
+function from anywhere, a function can modify its caller, or a thread B can
+modify a thread A (just for fun). See :ref:`Everything in Python is mutable
+<mutable>` for more information. It's also hard to support all introspections
+features like ``locals()`` (``vars()``), ``globals()`` and ``sys._getframe()``.
+
+FAT Python limitations
+----------------------
+
+The :ref:`copy builtin functions to constants <fat-copy-builtin-to-constant>`
+optimization changes the Python semantic. If a builtin function is replaced
+while the specialized function is optimized, the specialized function will
+continue to use the old builtin function. For this reason, the optimization
+is disabled by default.
 
 
 Goals
@@ -675,3 +702,12 @@ astoptimizer
 ============
 
 See :ref:`AST optimizer <new-ast-optimizer>`.
+
+
+Origins of FAT Python
+=====================
+
+* :ref:`Old AST optimizer project <old-ast-optimizer>`
+* :ref:`read-only Python <readonly>`
+* Dave Malcolm wrote a patch modifying Python/eval.c to support specialized
+  functions. See the http://bugs.python.org/issue10399
