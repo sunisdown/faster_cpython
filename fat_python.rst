@@ -605,7 +605,8 @@ Implementation
 
 FAT python:
 
-* Object/dictobject.c: implementation of the new verdict() type
+* new builtins.__fat__ variable (bool)
+* Object/dictobject.c: add __version__
 * Modules/_fat.c: specialized functions with guards
 * Lib/fat.py: guards and specialized function (_fat part not implemented
   in C yet)
@@ -616,7 +617,6 @@ FAT python:
 
 Other changes:
 
-* Objects/moduleobject.c: use verdict for module dictionaries
 * Python/bltinmodule.c: add __fat__ builtin symbol
 * Python/ceval.c: bugfix when builtins is not a dict type
 * Python/sysmodule.c: add sys.flags.fat
@@ -745,17 +745,6 @@ guards fail:
   the initial state)
 * The function was modified
 * An error occurred when getting the dictionary entry to get the key version
-
-
-Effect of FAT Python
-====================
-
-* Use fat.verdict instead of dict for:
-
-  * module.__dict__
-  * my_class.__dict__
-  * my_instance.__dict__
-  * set __fat__ to True
 
 
 astoptimizer
