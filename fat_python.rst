@@ -292,6 +292,10 @@ See also the :ref:`load globals and builtins when the module is loaded
 Limitations and Python semantic
 ===============================
 
+FAT Python bets that the Python code is not modified when modules are loaded,
+but only later, when functions and classes are executed. If this assumption is
+wrong, FAT Python changes the semantic of Python.
+
 .. _fat-python-semantic:
 
 Python semantic
