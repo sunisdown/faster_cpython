@@ -7,6 +7,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   fat_python.rst
    mutable.rst
    optimizations.rst
    bytecode.rst
@@ -14,7 +15,6 @@ Contents:
    ast_optimizer.rst
    new_ast_optimizer.rst
    old_ast_optimizer.rst
-   fat_python.rst
    registervm.rst
    readonly.rst
    history.rst
