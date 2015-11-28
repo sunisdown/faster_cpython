@@ -35,14 +35,16 @@ it will use two versions of some functions where one version is specialised to
 specific argument types, a specific environment, optimized when builtins are
 not mocked, etc.
 
-Threads on mailing lists:
+Announcements and status reports:
 
-* [python-ideas] `Add specialized bytecode with guards to functions
-  <https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>`_
-  (Oct 2015)
+* `Status of the FAT Python project, November 26, 2015
+  <https://haypo.github.io/fat-python-status-nov26-2015.html>`_
 * [python-dev] `Second milestone of FAT Python
   <https://mail.python.org/pipermail/python-dev/2015-November/142113.html>`_
   (Nov 2015)
+* [python-ideas] `Add specialized bytecode with guards to functions
+  <https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>`_
+  (Oct 2015)
 
 The project was created in October 2015.
 
