@@ -314,14 +314,68 @@ modify a thread A (just for fun). See :ref:`Everything in Python is mutable
 <mutable>` for more information. It's also hard to support all introspections
 features like ``locals()`` (``vars()``), ``globals()`` and ``sys._getframe()``.
 
-FAT Python limitations
-----------------------
+Builtin functions replaced in the middle of a function
+------------------------------------------------------
+
+FAT Python uses :ref:`guards <fat-guard>` to disable specialized function when
+assumptions made to optimize the function are no more true. The problem is that
+guard are only called at the entry of a function. For example, if a specialized
+function ensures that the builtin function ``chr()`` was not modified, but
+``chr()`` is modified during the call of the function, the specialized function
+will continue to call the old ``chr()`` function.
 
 The :ref:`copy builtin functions to constants <fat-copy-builtin-to-constant>`
 optimization changes the Python semantic. If a builtin function is replaced
 while the specialized function is optimized, the specialized function will
 continue to use the old builtin function. For this reason, the optimization
 is disabled by default.
+
+Example::
+
+    def func(arg):
+        x = chr(arg)
+
+        with unittest.mock.patch('builtins.chr', result='mock'):
+            y = chr(arg)
+
+        return (x == y)
+
+If the :ref:`copy builtin functions to constants
+<fat-copy-builtin-to-constant>` optimization is used on this function, the
+specialized function returns ``True``, whereas the original function returns
+``False``.
+
+
+Guards on builtin functions
+---------------------------
+
+When a function is specialized, the specialization is ignored if a builtin
+function was replaced after the end of the Python initialization. Typically,
+the end of the Python initialization occurs just after the execution of the
+``site`` module. It means that if a builtin is replaced during Python
+initialization, a function will be specialized even if the builtin is not the
+expected builtin function.
+
+Example::
+
+    import builtins
+
+    builtins.chr = lambda: mock
+
+    def func():
+        return len("abc")
+
+In this example, the ``func()`` is optimized, but the function is *not*
+specialize. The internal call to ``func.specialize()`` is ignored because the
+``chr()`` function was replaced after the end of the Python initialization.
+
+
+Guards on type dictionary and global namespace
+-----------------------------------------------
+
+For other guards on dictionaries (type dictionary, global namespace), the guard
+uses the current value of the mapping. It doesn't check if the dictionary value
+was "modified".
 
 
 Goals
