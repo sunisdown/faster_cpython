@@ -21,4 +21,5 @@ Contents:
    misc.rst
    gil.rst
    implementations.rst
+   benchmarks.rst
    links.rst
