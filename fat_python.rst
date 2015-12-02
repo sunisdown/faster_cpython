@@ -384,6 +384,16 @@ uses the current value of the mapping. It doesn't check if the dictionary value
 was "modified".
 
 
+Tracing and profiling
+---------------------
+
+Tracing and profiling works in FAT mode, but the exact control flow and traces
+are different in regular and FAT mode. For example, :ref:`loop unrolling
+<fat-loop-unroll>` removes the call to ``range(n)``.
+
+See ``sys.settrace()`` and ``sys.setprofiling()`` functions.
+
+
 Goals
 =====
 
