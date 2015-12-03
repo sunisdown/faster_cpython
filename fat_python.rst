@@ -734,7 +734,9 @@ FAT Python API
   - ``{'guard_type': 'dict', 'dict': ns, 'key': key}``:
     guard on the versionned dictionary ns[key]
   - ``{'guard_type': 'builtins', 'name': 'len'}``:
-    guard on builtins.__dict__['len']
+    guard on builtins.__dict__['len'] and globals()['len']. The specialization
+    is ignored if builtins.__dict__['len'] was replaced after the end of Python
+    initialization or if globals()['len'] already exists.
   - ``{'guard_type': 'globals', 'name': 'obj'}``:
     guard on globals()['obj']
   - ``{'guard_type': 'type_dict', 'type': MyClass, 'key': attr}``:
