@@ -5,7 +5,7 @@ Faster CPython
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    fat_python.rst
    mutable.rst
