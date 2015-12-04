@@ -37,6 +37,8 @@ not mocked, etc.
 
 Announcements and status reports:
 
+* [Python-Dev] `Third milestone of FAT Python
+  <https://mail.python.org/pipermail/python-dev/2015-December/142397.html>`_
 * `Status of the FAT Python project, November 26, 2015
   <https://haypo.github.io/fat-python-status-nov26-2015.html>`_
 * [python-dev] `Second milestone of FAT Python
