@@ -10,7 +10,7 @@ History of Python optimizations
 * xxxx-xx-xx: Creation of IronPython project by xxx
 * Creation of PyPy, spin-off of psyco
 * mid-2007: PyPy 1.0 released.
-* xxxx-xx-xx: Creation of Unladen Swallow project by xxx
+* 2009-03: Creation of Unladen Swallow project by xxx
 * xxxx-xx-xx: Creation of Pyston project by xxx
 * 2012-09: Creation of the :ref:`AST optimizer <old-ast-optimizer>` project by
   Victor Stinner

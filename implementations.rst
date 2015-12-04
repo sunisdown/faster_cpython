@@ -30,6 +30,9 @@ Fully Python compliant
 * `Unladen Swallow <http://code.google.com/p/unladen-swallow/>`_, fork of
   CPython 2.6, use LLVM. No more maintained
 
+  - Project `announced
+    <http://arstechnica.com/information-technology/2009/03/google-launches-project-to-boost-python-performance-by-5x/>`_
+    in 2009, abandonned in 2011
   - `ProjectPlan
     <http://code.google.com/p/unladen-swallow/wiki/ProjectPlan>`_
   - `Unladen Swallow Retrospective
