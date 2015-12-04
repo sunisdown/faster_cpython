@@ -122,15 +122,21 @@ The optimization on the builtin ``NAME`` requires two guards:
 * ``NAME`` key in builtin namespace
 * ``NAME`` key in global namespace
 
-Example::
+Example:
 
-    >>> def func():
-    ...     return len("abc")
-    ...
-    >>> import dis
-    >>> dis.dis(func.get_specialized()[0]['code'])
-      2           0 LOAD_CONST               1 (3)
-                  3 RETURN_VALUE
++------------------------+---------------+
+| Original               | Specialized   |
++========================+===============+
+| ::                     | ::            |
+|                        |               |
+|  def func():           |  def func():  |
+|      return len("abc") |      return 3 |
++------------------------+---------------+
+
+Bytecode of the specialized function::
+
+    0 LOAD_CONST               1 (3)
+    3 RETURN_VALUE
 
 
 .. _fat-loop-unroll:
@@ -150,11 +156,23 @@ See also the :ref:`loop unrolling optimization <loop-unroll>`.
 tuple example
 ^^^^^^^^^^^^^
 
-Example with a tuple::
+Example with a tuple.
 
-    def func():
-        for i in ("hello", "world"):
-            pass
++---------------------------+--------------------------+
+| Original                  | Loop unrolled            |
++===========================+==========================+
+| ::                        | ::                       |
+|                           |                          |
+|  def func():              |  def func():             |
+|      for i in ("a", "b"): |      i = "a"             |
+|          print(i)         |      print(i)            |
+|                           |                          |
+|                           |      i = "b"             |
+|                           |      print(i)            |
++---------------------------+--------------------------+
+
+No guard is required. The function has no specialized bytecode, the
+optimization is done directly on the function.
 
 Original bytecode::
 
@@ -171,7 +189,6 @@ Original bytecode::
     >>   17 LOAD_CONST               0 (None)
          20 RETURN_VALUE
 
-
 FAT Python bytecode::
 
     LOAD_CONST   1 ("hello")
@@ -183,34 +200,61 @@ FAT Python bytecode::
     LOAD_CONST   0 (None)
     RETURN_VALUE
 
-The function has no specialized bytecode, the optimization is directly
-on the function. No guard is required.
 
 range example
 ^^^^^^^^^^^^^
 
-Example with a ``range()``::
+Example of a loop using ``range()``.
 
-    def func():
-        for i in (1, 2, 3):
-            print(i)
-
-This function is specialized to::
-
-    def func():
-        i = 1
-        print(i)
-
-        i = 2
-        print(i)
-
-        i = 3
-        print(i)
++--------------------------+--------------------------+
+| Original                 | Loop unrolled            |
++==========================+==========================+
+| ::                       | ::                       |
+|                          |                          |
+|  def func():             |  def func():             |
+|      for i in range(2):  |      i = 0               |
+|          print(i)        |      print(i)            |
+|                          |                          |
+|                          |      i = 1               |
+|                          |      print(i)            |
++--------------------------+--------------------------+
 
 The specialized bytecode requires two :ref:`guards <fat-guard>`:
 
 * ``range`` builtin variable
 * ``range`` global variable
+
+Combined with :ref:`constant folding <fat-const-fold>`, the code becomes
+even more interesting::
+
+    def func():
+        i = 0
+        print(0)
+
+        i = 1
+        print(1)
+
+
+.. _fat-const-fold:
+
+Constant folding
+================
+
+Propage constant values of variables.
+
++----------------+------------------+
+| Original       | Constant folding |
++================+==================+
+| ::             | ::               |
+|                |                  |
+|   def func()   |   def func()     |
+|       x = 1    |       x = 1      |
+|       y = x    |       y = 1      |
+|       return y |       return 1   |
++----------------+------------------+
+
+See also the :ref:`constant folding <const-fold>` optimization.
+
 
 
 .. _fat-copy-builtin-to-constant:
@@ -221,21 +265,23 @@ Copy builtin functions to constants
 Opt-in optimization (disabled by default) to copy builtin functions to
 constants.
 
-Example::
+Example with a function simple::
 
     def log(message):
         print(message)
 
-==================================================  ================================================
-Bytecode                                            Specialized bytecode
-==================================================  ================================================
-``LOAD_GLOBAL   0 (print)``                         ``LOAD_CONST      1 (<built-in function print>)``
-``LOAD_FAST     0 (message)``                       ``LOAD_FAST       0 (message)``
-``CALL_FUNCTION 1 (1 positional, 0 keyword pair)``  ``CALL_FUNCTION   1 (1 positional, 0 keyword pair)``
-``POP_TOP``                                         ``POP_TOP``
-``LOAD_CONST    0 (None)``                          ``LOAD_CONST      0 (None)``
-``RETURN_VALUE``                                    ``RETURN_VALUE``
-==================================================  ================================================
++--------------------------------------------------+----------------------------------------------------+
+| Bytecode                                         | Specialized bytecode                               |
++==================================================+====================================================+
+| ::                                               | ::                                                 |
+|                                                  |                                                    |
+|   LOAD_GLOBAL   0 (print)                        |   LOAD_CONST      1 (<built-in function print>)    |
+|   LOAD_FAST     0 (message)                      |   LOAD_FAST       0 (message)                      |
+|   CALL_FUNCTION 1 (1 positional, 0 keyword pair) |   CALL_FUNCTION   1 (1 positional, 0 keyword pair) |
+|   POP_TOP                                        |   POP_TOP                                          |
+|   LOAD_CONST    0 (None)                         |   LOAD_CONST      0 (None)                         |
+|   RETURN_VALUE                                   |   RETURN_VALUE                                     |
++--------------------------------------------------+----------------------------------------------------+
 
 The first ``LOAD_GLOBAL`` instruction is replaced with ``LOAD_CONST``.
 ``LOAD_GLOBAL`` requires to lookup in the global namespace and then in the
@@ -255,26 +301,20 @@ The optimization on the builtin ``NAME`` requires two guards:
 * ``NAME`` key in builtin namespace
 * ``NAME`` key in global namespace
 
-Example::
-
-    >>> def func(a, b):
-    ...     return max(a, b)
-    ...
-    >>> dis.dis(func.get_specialized()[0]['code'])
-      2           0 LOAD_CONST               1 (<built-in function max>)
-                  3 LOAD_FAST                0 (a)
-                  6 LOAD_FAST                1 (b)
-                  9 CALL_FUNCTION            2 (2 positional, 0 keyword pair)
-                 12 RETURN_VALUE
-
 This optimization is disabled by default because it changes the :ref:`Python
 semantic <fat-python-semantic>`: if the copied builtin function is replacd in
 the middle of the function, the specialized bytecode still uses the old builtin
 function.
 
-Currently, astoptimizer is unable to guess if an instruction can
-modify builtins functions or not. For example, the optimization changes the
-behaviour of the following function::
+See also the :ref:`load globals and builtins when the module is loaded
+<load-global-optim>` optimization.
+
+.. note::
+   Currently, astoptimizer is unable to guess if an instruction can modify
+   builtins functions or not. For example, the optimization changes the
+   behaviour of the following function.
+
+::
 
     def func():
         x = range(3)
@@ -286,9 +326,6 @@ behaviour of the following function::
             print(len(x))   # expect: mock
         finally:
             builtins.len = _len
-
-See also the :ref:`load globals and builtins when the module is loaded
-<load-global-optim>` optimization.
 
 
 Limitations and Python semantic

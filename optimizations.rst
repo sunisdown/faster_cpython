@@ -115,6 +115,8 @@ Examples:
 Can be implemented in the AST optimizer.
 
 
+.. _const-fold:
+
 Constant folding
 ================
 
@@ -132,6 +134,8 @@ The function becomes::
         def func():
             ...
             self.write(b'(t')
+
+FAT Python implements :ref:`constant folding <fat-const-fold>`.
 
 Can be implemented in an :ref:`AST optimizer <ast-optimizers>`.
 
