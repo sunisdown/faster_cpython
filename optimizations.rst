@@ -120,7 +120,7 @@ Can be implemented in the AST optimizer.
 Constant propagation
 ====================
 
-Propage constant values of variables. Example:
+Propagate constant values of variables. Example:
 
 +----------------+----------------------+
 | Original       | Constant propagation |

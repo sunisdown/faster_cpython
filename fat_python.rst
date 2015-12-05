@@ -244,7 +244,7 @@ even more interesting::
 Constant propagation
 --------------------
 
-Propage constant values of variables.
+Propagate constant values of variables.
 
 +----------------+----------------------+
 | Original       | Constant propagation |
