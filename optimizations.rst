@@ -135,12 +135,16 @@ The function becomes::
             ...
             self.write(b'(t')
 
-FAT Python implements :ref:`constant folding <fat-const-fold>`.
+FAT Python implements :ref:`constant propagation and constant folding
+<fat-const-fold>`.
 
 Can be implemented in an :ref:`AST optimizer <ast-optimizers>`.
 
 See also `issue #1346238 <http://bugs.python.org/issue1346238>`_: A constant
 folding optimization pass for the AST.
+
+Read also the `Wikipedia article on constant folding
+<https://en.wikipedia.org/wiki/Constant_folding>`_.
 
 
 Peephole optimizer

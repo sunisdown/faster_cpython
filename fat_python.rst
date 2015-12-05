@@ -240,23 +240,49 @@ even more interesting::
 .. _fat-const-fold:
 
 Constant folding
-================
+----------------
+
+Constant propagation
+^^^^^^^^^^^^^^^^^^^^
 
 Propage constant values of variables.
 
-+----------------+------------------+
-| Original       | Constant folding |
-+================+==================+
-| ::             | ::               |
-|                |                  |
-|   def func()   |   def func()     |
-|       x = 1    |       x = 1      |
-|       y = x    |       y = 1      |
-|       return y |       return 1   |
-+----------------+------------------+
++----------------+----------------------+
+| Original       | Constant propagation |
++================+======================+
+| ::             | ::                   |
+|                |                      |
+|   def func()   |   def func()         |
+|       x = 1    |       x = 1          |
+|       y = x    |       y = 1          |
+|       return y |       return 1       |
++----------------+----------------------+
+
+
+Constant folding
+^^^^^^^^^^^^^^^^
+
+Compute simple operations at the compilation:
+
+* arithmetic operations: a+b, a-b, a*b, a/b, a//b, a%b, a**b, a<<b, a>>b, a&b,
+  a|b and a^b for int, float and complex types
+* tuple + tuple
+* tuple * int
+* str * int
+* bytes * int
+
+Example:
+
++--------------------+------------------+
+| Original           | Constant folding |
++====================+==================+
+| ::                 | ::               |
+|                    |                  |
+|   def func()       |   def func()     |
+|       return 1 + 1 |       return 2   |
++--------------------+------------------+
 
 See also the :ref:`constant folding <const-fold>` optimization.
-
 
 
 .. _fat-copy-builtin-to-constant:
