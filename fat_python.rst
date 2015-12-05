@@ -266,10 +266,9 @@ Compute simple operations at the compilation:
 
 * arithmetic operations: a+b, a-b, a*b, a/b, a//b, a%b, a**b, a<<b, a>>b, a&b,
   a|b and a^b for int, float and complex types
-* tuple + tuple
-* tuple * int
-* str * int
-* bytes * int
+* str: str + str, str * int
+* bytes: bytes + bytes, bytes * int
+* tuple: tuple + tuple, tuple * int
 
 Example:
 
