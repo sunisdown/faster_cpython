@@ -50,6 +50,8 @@ Announcements and status reports:
 
 The project was created in October 2015.
 
+See also the :ref:`AST optimizer <new-ast-optimizer>`.
+
 
 Test FAT Python
 ===============
@@ -458,6 +460,33 @@ are different in regular and FAT mode. For example, :ref:`loop unrolling
 
 See ``sys.settrace()`` and ``sys.setprofiling()`` functions.
 
+Expected limitations
+--------------------
+
+Inlining makes debugging more complex:
+
+* sys.getframe()
+* locals()
+* pdb
+* etc.
+* don't work as expected anymore
+
+Bugs, shit happens:
+
+* Missing guard: specialized function is called even if the "environment"
+  was modified
+
+FAT python! Memory vs CPU, fight!
+
+* Memory footprint: loading two versions of a function is memory uses more
+  memory
+* Disk usage: .pyc will be more larger
+
+Possible worse performance:
+
+* guards adds an overhead higher than the optimization of the specialized code
+* specialized code may be slower than the original bytecode
+
 
 Goals
 =====
@@ -664,17 +693,6 @@ To replace ``is_python(filename)`` with ``filename.endswith('.py')`` in
 * the ``is_python()`` function was not modified
 
 
-Specialized methods
-===================
-
-FIXME: this section must be written, it looks wrong.
-
-A specialized method requires to be more careful, guards must be put on the
-object method but also on the class method.
-
-See the fat.specialized_method() function.
-
-
 Implementation
 ==============
 
@@ -682,22 +700,22 @@ FAT python:
 
 * new builtins.__fat__ variable (bool)
 * Object/dictobject.c: add __version__
-* Modules/_fat.c: specialized functions with guards
-* Lib/fat.py: guards and specialized function (_fat part not implemented
-  in C yet)
+* Modules/fat.c: specialized functions with guards
 * Tests
 
-  - Lib/test/fattester.py
   - Lib/test/test_fat.py
+  - Lib/test/fattester.py
+  - Lib/test/fattesterast.py
+  - Lib/test/fattesterast2.py
 
 Other changes:
 
 * Python/bltinmodule.c: add __fat__ builtin symbol
-* Python/ceval.c: bugfix when builtins is not a dict type
+* Python/ceval.c: bugfixes when builtins is not a dict type
 * Python/sysmodule.c: add sys.flags.fat
 * Modules/main.c: add -F command line option
 
-See also ASTOPTIMIZER.rst for the documentation on the AST optimizer.
+See also the :ref:`AST optimizer <new-ast-optimizer>`.
 
 
 Possible optimizations
@@ -759,34 +777,6 @@ Example of function with side effect::
         return s
 
 
-Expected limitations
-====================
-
-Inlining makes debugging more complex:
-
-* sys.getframe()
-* locals()
-* pdb
-* etc.
-* don't work as expected anymore
-
-Bugs, shit happens:
-
-* Missing guard: specialized function is called even if the "environment"
-  was modified
-
-FAT python! Memory vs CPU, fight!
-
-* Memory footprint: loading two versions of a function is memory uses more
-  memory
-* Disk usage: .pyc will be more larger
-
-Possible worse performance:
-
-* guards adds an overhead higher than the optimization of the specialized code
-* specialized code may be slower than the original bytecode
-
-
 FAT Python API
 ==============
 
@@ -822,12 +812,6 @@ guards fail:
   the initial state)
 * The function was modified
 * An error occurred when getting the dictionary entry to get the key version
-
-
-astoptimizer
-============
-
-See :ref:`AST optimizer <new-ast-optimizer>`.
 
 
 Origins of FAT Python
