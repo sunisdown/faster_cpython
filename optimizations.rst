@@ -115,36 +115,55 @@ Examples:
 Can be implemented in the AST optimizer.
 
 
+.. _const-prop:
+
+Constant propagation
+====================
+
+Propage constant values of variables. Example:
+
++----------------+----------------------+
+| Original       | Constant propagation |
++================+======================+
+| ::             | ::                   |
+|                |                      |
+|   def func()   |   def func()         |
+|       x = 1    |       x = 1          |
+|       y = x    |       y = 1          |
+|       return y |       return 1       |
++----------------+----------------------+
+
+FAT Python implements :ref:`constant propagation <fat-const-prop>`.
+
+Read also the `Wikipedia article on copy propagation
+<https://en.wikipedia.org/wiki/Copy_propagation>`_.
+
+
 .. _const-fold:
 
 Constant folding
 ================
 
-Replace constants by their values. Simple example from pickle.py::
+Compute simple operations at the compilation. Usually, at least arithmetic
+operations (a+b, a-b, a*b, etc.) are computed. Example:
 
-        MARK = b'('
-        TUPLE = b't'
++--------------------+------------------+
+| Original           | Constant folding |
++====================+==================+
+| ::                 | ::               |
+|                    |                  |
+|   def func()       |   def func()     |
+|       return 1 + 1 |       return 2   |
++--------------------+------------------+
 
-        def func():
-            ...
-            self.write(MARK + TUPLE)
+FAT Python implements :ref:`constant folding <fat-const-fold>`.
 
-The function becomes::
+See also
 
-        def func():
-            ...
-            self.write(b'(t')
-
-FAT Python implements :ref:`constant propagation and constant folding
-<fat-const-fold>`.
-
-Can be implemented in an :ref:`AST optimizer <ast-optimizers>`.
-
-See also `issue #1346238 <http://bugs.python.org/issue1346238>`_: A constant
-folding optimization pass for the AST.
-
-Read also the `Wikipedia article on constant folding
-<https://en.wikipedia.org/wiki/Constant_folding>`_.
+* `issue #1346238 <http://bugs.python.org/issue1346238>`_:
+  A constant folding optimization pass for the AST
+* `Wikipedia article on constant folding
+  <https://en.wikipedia.org/wiki/Constant_folding>`_.
 
 
 Peephole optimizer

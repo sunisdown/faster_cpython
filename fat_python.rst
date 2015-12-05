@@ -237,13 +237,10 @@ even more interesting::
         print(1)
 
 
-.. _fat-const-fold:
-
-Constant folding
-----------------
+.. _fat-const-prop:
 
 Constant propagation
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 Propage constant values of variables.
 
@@ -258,9 +255,13 @@ Propage constant values of variables.
 |       return y |       return 1       |
 +----------------+----------------------+
 
+See also the :ref:`constant propagation <const-prop>` optimization.
+
+
+.. _fat-const-fold:
 
 Constant folding
-^^^^^^^^^^^^^^^^
+----------------
 
 Compute simple operations at the compilation:
 
