@@ -226,7 +226,7 @@ The specialized bytecode requires two :ref:`guards <fat-guard>`:
 * ``range`` builtin variable
 * ``range`` global variable
 
-Combined with :ref:`constant folding <fat-const-fold>`, the code becomes
+Combined with :ref:`constant propagation <fat-const-prop>`, the code becomes
 even more interesting::
 
     def func():
