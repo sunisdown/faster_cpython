@@ -701,6 +701,7 @@ FAT python:
 * new builtins.__fat__ variable (bool)
 * Object/dictobject.c: add __version__
 * Modules/fat.c: specialized functions with guards
+* Parser/Python.asdl: add ast.FrozenSet
 * Tests
 
   - Lib/test/test_fat.py
