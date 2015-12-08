@@ -487,6 +487,11 @@ Possible worse performance:
 * guards adds an overhead higher than the optimization of the specialized code
 * specialized code may be slower than the original bytecode
 
+Limitations of the AST optimizer
+--------------------------------
+
+See :ref:`Limitations of the AST optimizer <new-ast-optimizer-limits>`.
+
 
 Goals
 =====
@@ -701,7 +706,6 @@ FAT python:
 * new builtins.__fat__ variable (bool)
 * Object/dictobject.c: add __version__
 * Modules/fat.c: specialized functions with guards
-* Parser/Python.asdl: add ast.FrozenSet
 * Tests
 
   - Lib/test/test_fat.py

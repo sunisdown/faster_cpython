@@ -7,6 +7,18 @@ New AST Optimizer
 The :ref:`FAT Python <fat-python>` projects comes with a new :ref:`AST optimizer
 <ast-optimizers>` project.
 
+.. _new-ast-optimizer-limits:
+
+Limitations
+===========
+
+* Decorators are not supported (yet?)
+* Keywords are not supported yet
+
+See also the `FAT Python TODO file
+<https://hg.python.org/sandbox/fatpython/file/tip/TODO.rst>`_.
+
+
 Implementation
 ==============
 
@@ -15,6 +27,7 @@ Files:
 * Lib/astoptimizer.py
 * Lib/test/test_astoptimizer.py
 * Python/sysmodule.c: add sys.asthook
+* Parser/Python.asdl: add ast.Constant
 * PyParser_ASTFromStringObject() calls call_ast_hook()
 
 Other changes:
