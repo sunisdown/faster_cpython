@@ -12,7 +12,7 @@ Implementation: Python/peephole.c
 Optmizations:
 
 * :ref:`Constant folding <const-fold>`
-* :ref:`Remove dead code <remove-dead-code>`
+* :ref:`Dead code elimination <dead-code>`
 * Some other optimizations more specific to the bytecode, like removal
   of useless jumps and optimizations on conditional jumps
 

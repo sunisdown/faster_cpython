@@ -215,14 +215,19 @@ FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
 Read also the `Wikipedia article on loop unrolling
 <https://en.wikipedia.org/wiki/Loop_unrolling>`_.
 
-.. _remove-dead-code:
+.. _dead-code:
 
-Remove dead code
-================
+Dead code elimination
+=====================
 
-- ``if DEBUG: print("debug")`` where ``DEBUG`` is known to be False
+* Replace ``if 0: code`` with ``pass``
+* ``if DEBUG: print("debug")`` where ``DEBUG`` is known to be False
 
-Implemented in the :ref:`CPython peephole optimizer <cpython-peephole>`.
+Implemented in the :ref:`CPython peephole optimizer <cpython-peephole>`
+and :ref:`FAT Python <fat-dead-code>`.
+
+See also `Wikipedia Dead code elimination article
+<https://en.wikipedia.org/wiki/Dead_code_elimination>`_.
 
 
 .. _load-global-optim:

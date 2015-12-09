@@ -327,6 +327,36 @@ Replace ``__debug__`` and ``__fat__`` constants with their value.
 :ref:`Configuration option <fat-config>`: ``replace_builtin_constant``.
 
 
+.. _fat-dead-code:
+
+Dead code elimination
+---------------------
+
+Remove the dead code.
+
+Examples:
+
+============================  ======================
+Code                          Dead code eliminated
+============================  ======================
+if 1: code                    code
+if 0: code                    pass
+while 0: code                 pass
+while 0: code / else: code2   code2
+if 0: code2 / else: code2     code2
+code1; return ...; code2      code1; return ...
+code1; raise ...; code2       code1; raise ...
+============================  ======================
+
+.. note::
+   If a code block contains ``global``, ``nonlocal``, ``yield`` or ``yield
+   from``, the code block is not removed.
+
+:ref:`Configuration option <fat-config>`: ``remove_dead_code``.
+
+See also :ref:`dead code elimination <dead-code>` optimization.
+
+
 .. _fat-copy-builtin-to-constant:
 
 Copy builtin functions to constants
@@ -418,6 +448,9 @@ the ``__astoptimizer__`` variable. Configuration keys:
 
 * ``copy_builtin_to_constant`` (``bool``): enable :ref:`copy builtin functions
   to constants <fat-copy-builtin-to-constant>` optimization? (default: false)
+
+* ``remove_dead_code`` (``bool``): enable :ref:`dead code elimination
+  <fat-dead-code>` optimization? (default: false)
 
 * maximum size of constants:
 
