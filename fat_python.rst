@@ -155,6 +155,8 @@ By default, only loops with 16 iterations or less are optimized.
    If ``break`` and/or ``continue`` instructions are used in the loop body,
    the loop is not unrolled.
 
+:ref:`Configuration option <fat-config>`: ``unroll_loops``.
+
 See also the :ref:`loop unrolling optimization <loop-unroll>`.
 
 tuple example
@@ -257,6 +259,8 @@ Propagate constant values of variables.
 |       return y |       return 1       |
 +----------------+----------------------+
 
+:ref:`Configuration option <fat-config>`: ``constant_propagation``.
+
 See also the :ref:`constant propagation <const-prop>` optimization.
 
 
@@ -316,7 +320,19 @@ not x < y            x >= y
 9 not in (1, 2, 3)   True
 ===================  ===========================
 
+:ref:`Configuration option <fat-config>`: ``constant_folding``.
+
 See also the :ref:`constant folding <const-fold>` optimization.
+
+
+.. _fat-replace-builtin-constant:
+
+Replace builtin constants
+-------------------------
+
+Replace ``__debug__`` and ``__fat__`` constants with their value.
+
+:ref:`Configuration option <fat-config>`: ``replace_builtin_constant``.
 
 
 .. _fat-copy-builtin-to-constant:
@@ -390,6 +406,8 @@ See also the :ref:`load globals and builtins when the module is loaded
             builtins.len = _len
 
 
+.. _fat-config:
+
 Configuration
 =============
 
@@ -398,8 +416,9 @@ the ``__astoptimizer__`` variable. Configuration keys:
 
 * ``enabled`` (``bool``): set to ``False`` to disable all optimization
 * ``constant_propagation`` (``bool``): enable constant propagation
-  optimization?
+  optimization? See :ref:`constant propagation <fat-const-prop>` optimization.
 * ``constant_folding`` (``bool``): enable constant folding optimization?
+  See :ref:`constant folding <fat-const-fold>` optimization.
 * maximum size of constants:
 
   - ``max_bytes_len``: Maxmimum number of bytes of a text string (default: 128)
@@ -408,11 +427,13 @@ the ``__astoptimizer__`` variable. Configuration keys:
   - ``max_constant_size``: Maxmimum size in bytes of other constants
     (default: 128 bytes), the size is computed with ``len(marshal.dumps(obj))``
 
-* ``replace_builtin_constant``: if true, replace ``__debug__`` and ``__fat__``
-  constants with their (default: ``False``)
+* ``replace_builtin_constant`` (``bool``): if true, replace ``__debug__`` and ``__fat__``
+  constants with their (default: ``False``). See :ref:`replace builtin
+  constants <fat-replace-builtin-constant>` optimization.
 
 * ``unroll_loops``: Maximum number of loop iteration for loop unrolling
-  (default: ``16``). Set it to ``0`` to disable loop unrolling.
+  (default: ``16``). Set it to ``0`` to disable loop unrolling. See
+  :ref:`loop unrolling <fat-loop-unroll>` optimization.
 
 Example to disable completly optimizations in a module::
 
