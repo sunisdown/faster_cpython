@@ -467,9 +467,13 @@ the ``__astoptimizer__`` variable. Configuration keys:
   (default: ``16``). Set it to ``0`` to disable loop unrolling. See
   :ref:`loop unrolling <fat-loop-unroll>` optimization.
 
-Example to disable completly optimizations in a module::
+Example to disable all optimizations in a module::
 
     __astoptimizer__ = {'enabled': False}
+
+Example to disable the constant folding optimization::
+
+    __astoptimizer__ = {'constant_folding': False}
 
 
 Limitations and Python semantic
