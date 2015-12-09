@@ -466,7 +466,8 @@ example, in CPython, it's technically possible to modify local variables of a
 function from anywhere, a function can modify its caller, or a thread B can
 modify a thread A (just for fun). See :ref:`Everything in Python is mutable
 <mutable>` for more information. It's also hard to support all introspections
-features like ``locals()`` (``vars()``), ``globals()`` and ``sys._getframe()``.
+features like ``locals()`` (``vars()``, ``dir()``), ``globals()`` and
+``sys._getframe()``.
 
 Builtin functions replaced in the middle of a function
 ------------------------------------------------------

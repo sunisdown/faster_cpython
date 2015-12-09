@@ -9,6 +9,13 @@ CPython peephole optimizer
 
 Implementation: Python/peephole.c
 
+Optmizations:
+
+* :ref:`Constant folding <const-fold>`
+* :ref:`Remove dead code <remove-dead-code>`
+* Some other optimizations more specific to the bytecode, like removal
+  of useless jumps and optimizations on conditional jumps
+
 Lastest enhancement::
 
     changeset:   68375:14205d0fee45

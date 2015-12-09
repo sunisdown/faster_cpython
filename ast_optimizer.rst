@@ -24,6 +24,13 @@ New AST optimizer combined with FAT Python
 See :ref:`new AST optimizer <new-ast-optimizer>`.
 
 
+pythran AST
+===========
+
+pythran.analysis.PureFunctions of pythran project, depend on ArgumentEffects
+and GlobalEffects analysis: automatically detect pure functions.
+
+
 PyPy AST optimizer
 ==================
 

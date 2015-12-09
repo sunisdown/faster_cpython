@@ -156,7 +156,8 @@ operations (a+b, a-b, a*b, etc.) are computed. Example:
 |       return 1 + 1 |       return 2   |
 +--------------------+------------------+
 
-FAT Python implements :ref:`constant folding <fat-const-fold>`.
+Implemented in :ref:`FAT Python <fat-const-fold>` and the :ref:`CPython
+peephole optimizer <cpython-peephole>`.
 
 See also
 
@@ -214,11 +215,14 @@ FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
 Read also the `Wikipedia article on loop unrolling
 <https://en.wikipedia.org/wiki/Loop_unrolling>`_.
 
+.. _remove-dead-code:
 
 Remove dead code
 ================
 
 - ``if DEBUG: print("debug")`` where ``DEBUG`` is known to be False
+
+Implemented in the :ref:`CPython peephole optimizer <cpython-peephole>`.
 
 
 .. _load-global-optim:
