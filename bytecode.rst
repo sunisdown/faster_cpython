@@ -7,14 +7,18 @@ Python bytecode
 CPython peephole optimizer
 ==========================
 
-Examples:
+Implementation: Python/peephole.c
 
-* x+0 => x if x is an int
-* x*0 => 0 if x is an int
-* x*1 => x if x is an int, str or a tuple
-* x and True
-* x or False
-* x = x + 1 => x += 1 if x is an int
+Lastest enhancement::
+
+    changeset:   68375:14205d0fee45
+    user:        Antoine Pitrou <solipsis@pitrou.net>
+    date:        Fri Mar 11 17:27:02 2011 +0100
+    files:       Lib/test/test_peepholer.py Misc/NEWS Python/peephole.c
+    description:
+    Issue #11244: The peephole optimizer is now able to constant-fold
+    arbitrarily complex expressions.  This also fixes a 3.2 regression where
+    operations involving negative numbers were not constant-folded.
 
 Should be rewritten as an :ref:`AST optimizer <ast-optimizers>`.
 
