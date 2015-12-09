@@ -267,11 +267,26 @@ Constant folding
 
 Compute simple operations at the compilation:
 
-* arithmetic operations: a+b, a-b, a*b, a/b, a//b, a%b, a**b, a<<b, a>>b, a&b,
-  a|b and a^b for int, float and complex types
-* str: str + str, str * int
-* bytes: bytes + bytes, bytes * int
-* tuple: tuple + tuple, tuple * int
+* arithmetic operations:
+
+  - ``a+b``, ``a-b``, ``a*b``, ``a/b``: int, float, complex
+  - ``+x``, ``-x``, ``~x``: int, float, complex
+  - ``a//b``, ``a%b``, ``a**b``: int, float
+  - ``a<<b``, ``a>>b``, ``a&b``, ``a|b``, ``a^b``: int
+
+* comparison, tests:
+
+  - ``a < b``, ``a <= b``, ``a >= b``, ``a > b``
+  - ``a == b``, ``a != b``: don't optimize bytes == str
+  - ``obj in seq``, ``obj not in seq``: for bytes, str, tuple ``seq``
+  - ``not x``: int
+
+* str: ``str + str``, ``str * int``
+* bytes: ``bytes + bytes``, ``bytes * int``
+* tuple: ``tuple + tuple``, ``tuple * int``
+* str, bytes, tuple: ``obj[index]``, ``obj[a:b:c]``
+* replace ``x in list`` with ``x in tuple`` if list only contains constants
+* replace ``x in set`` with ``x in frozenset`` if set only contains constants
 
 Example:
 
@@ -283,6 +298,23 @@ Example:
 |   def func()       |   def func()     |
 |       return 1 + 1 |       return 2   |
 +--------------------+------------------+
+
+Other examples of optimizations:
+
+===================  ===========================
+Code                 Constant folding
+===================  ===========================
+-(5)                 -5
++5                   5
+x in [1, 2, 3]       x in (1, 2, 3)
+x in {1, 2, 3}       x in frozenset({1, 2, 3})
+not x < y            x >= y
+'Python' * 2         'PythonPython'
+3 * (5,)             (5, 5, 5)
+'python2.7'[:-2]     'python2'
+'P' in 'Python'      True
+9 not in (1, 2, 3)   True
+===================  ===========================
 
 See also the :ref:`constant folding <const-fold>` optimization.
 
