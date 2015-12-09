@@ -384,6 +384,8 @@ semantic <fat-python-semantic>`: if the copied builtin function is replacd in
 the middle of the function, the specialized bytecode still uses the old builtin
 function.
 
+:ref:`Configuration option <fat-config>`: ``copy_builtin_to_constant``.
+
 See also the :ref:`load globals and builtins when the module is loaded
 <load-global-optim>` optimization.
 
@@ -414,11 +416,17 @@ Configuration
 It is possible to configure the AST optimizer per module by setting
 the ``__astoptimizer__`` variable. Configuration keys:
 
-* ``enabled`` (``bool``): set to ``False`` to disable all optimization
-* ``constant_propagation`` (``bool``): enable constant propagation
-  optimization? See :ref:`constant propagation <fat-const-prop>` optimization.
-* ``constant_folding`` (``bool``): enable constant folding optimization?
-  See :ref:`constant folding <fat-const-fold>` optimization.
+* ``enabled`` (``bool``): set to ``False`` to disable all optimization (default: true)
+
+* ``constant_propagation`` (``bool``): enable :ref:`constant propagation <fat-const-prop>`
+  optimization? (default: true)
+
+* ``constant_folding`` (``bool``): enable :ref:`constant folding
+  <fat-const-fold>` optimization? (default: true)
+
+* ``copy_builtin_to_constant`` (``bool``): enable :ref:`copy builtin functions
+  to constants <fat-copy-builtin-to-constant>` optimization? (default: false)
+
 * maximum size of constants:
 
   - ``max_bytes_len``: Maxmimum number of bytes of a text string (default: 128)
@@ -427,9 +435,8 @@ the ``__astoptimizer__`` variable. Configuration keys:
   - ``max_constant_size``: Maxmimum size in bytes of other constants
     (default: 128 bytes), the size is computed with ``len(marshal.dumps(obj))``
 
-* ``replace_builtin_constant`` (``bool``): if true, replace ``__debug__`` and ``__fat__``
-  constants with their (default: ``False``). See :ref:`replace builtin
-  constants <fat-replace-builtin-constant>` optimization.
+* ``replace_builtin_constant`` (``bool``): enable :ref:`replace builtin
+  constants <fat-replace-builtin-constant>` optimization? (default: true)
 
 * ``unroll_loops``: Maximum number of loop iteration for loop unrolling
   (default: ``16``). Set it to ``0`` to disable loop unrolling. See
