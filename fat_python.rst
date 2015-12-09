@@ -358,6 +358,35 @@ See also the :ref:`load globals and builtins when the module is loaded
             builtins.len = _len
 
 
+Configuration
+=============
+
+It is possible to configure the AST optimizer per module by setting
+the ``__astoptimizer__`` variable. Configuration keys:
+
+* ``enabled`` (``bool``): set to ``False`` to disable all optimization
+* ``constant_propagation`` (``bool``): enable constant propagation
+  optimization?
+* ``constant_folding`` (``bool``): enable constant folding optimization?
+* maximum size of constants:
+
+  - ``max_bytes_len``: Maxmimum number of bytes of a text string (default: 128)
+  - ``max_int_bits``: Maximum number of bits of an integer (default: 256)
+  - ``max_str_len``: Maxmimum number of characters of a text string (default: 128)
+  - ``max_constant_size``: Maxmimum size in bytes of other constants
+    (default: 128 bytes), the size is computed with ``len(marshal.dumps(obj))``
+
+* ``replace_builtin_constant``: if true, replace ``__debug__`` and ``__fat__``
+  constants with their (default: ``False``)
+
+* ``unroll_loops``: Maximum number of loop iteration for loop unrolling
+  (default: ``16``). Set it to ``0`` to disable loop unrolling.
+
+Example to disable completly optimizations in a module::
+
+    __astoptimizer__ = {'enabled': False}
+
+
 Limitations and Python semantic
 ===============================
 
