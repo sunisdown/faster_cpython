@@ -402,32 +402,18 @@ The optimization on the builtin ``NAME`` requires two guards:
 * ``NAME`` key in global namespace
 
 This optimization is disabled by default because it changes the :ref:`Python
-semantic <fat-python-semantic>`: if the copied builtin function is replacd in
+semantic <fat-python-semantic>`: if the copied builtin function is replaced in
 the middle of the function, the specialized bytecode still uses the old builtin
-function.
+function. To use the optimization on a project, you may have to add the
+following :ref:`configuration <fat-config>` at the top of the file::
+
+    __astoptimizer__ = {'copy_builtin_to_constant': False}
 
 :ref:`Configuration option <fat-config>`: ``copy_builtin_to_constant``.
 
+
 See also the :ref:`load globals and builtins when the module is loaded
 <load-global-optim>` optimization.
-
-.. note::
-   Currently, astoptimizer is unable to guess if an instruction can modify
-   builtins functions or not. For example, the optimization changes the
-   behaviour of the following function.
-
-::
-
-    def func():
-        x = range(3)
-        print(len(x))   # expect: 3
-
-        _len = builtins.len
-        try:
-            builtins.len = lambda x: "mock"
-            print(len(x))   # expect: mock
-        finally:
-            builtins.len = _len
 
 
 .. _fat-config:
@@ -536,6 +522,11 @@ If the :ref:`copy builtin functions to constants
 <fat-copy-builtin-to-constant>` optimization is used on this function, the
 specialized function returns ``True``, whereas the original function returns
 ``False``.
+
+It is possible to work around this limitation by adding the following
+:ref:`configuration <fat-config>` at the top of the file::
+
+    __astoptimizer__ = {'copy_builtin_to_constant': False}
 
 But the following use cases works as expected in FAT mode::
 
