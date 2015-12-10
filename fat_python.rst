@@ -537,6 +537,28 @@ If the :ref:`copy builtin functions to constants
 specialized function returns ``True``, whereas the original function returns
 ``False``.
 
+But the following use cases works as expected in FAT mode::
+
+    import unittest.mock
+
+    def func():
+        return chr(65)
+
+    def test():
+        print(func())
+        with unittest.mock.patch('builtins.chr', return_value="mock"):
+            print(func())
+
+Output::
+
+    A
+    mock
+
+The ``test()`` function doesn't use the builtin ``chr()`` function.
+The ``func()`` function checks its guard on the builtin ``chr()`` function only
+when it's called, so it doesn't use the specialized function when ``chr()``
+is mocked.
+
 
 Guards on builtin functions
 ---------------------------
