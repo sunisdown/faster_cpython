@@ -207,8 +207,8 @@ Combined with other optimizations, the code can be simplified to::
     print('0')
     print('1')
     print('2')
-    print('3')
     i = 3
+    print('3')
 
 FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
 
