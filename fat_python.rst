@@ -288,7 +288,7 @@ Compute simple operations at the compilation:
 * str: ``str + str``, ``str * int``
 * bytes: ``bytes + bytes``, ``bytes * int``
 * tuple: ``tuple + tuple``, ``tuple * int``
-* str, bytes, tuple: ``obj[index]``, ``obj[a:b:c]``
+* str, bytes, tuple, list: ``obj[index]``, ``obj[a:b:c]``
 * replace ``x in list`` with ``x in tuple`` if list only contains constants
 * replace ``x in set`` with ``x in frozenset`` if set only contains constants
 * simplify tests:
@@ -321,6 +321,7 @@ x in {1, 2, 3}       x in frozenset({1, 2, 3})
 'python2.7'[:-2]     'python2'
 'P' in 'Python'      True
 9 not in (1, 2, 3)   True
+[5, 9, 20][1]        9
 ===================  ===========================
 
 :ref:`Configuration option <fat-config>`: ``constant_folding``.
