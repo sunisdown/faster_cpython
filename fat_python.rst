@@ -349,21 +349,81 @@ Remove the dead code.
 
 Examples:
 
-============================  ======================
-Code                          Dead code eliminated
-============================  ======================
-if 1: code                    code
-if 0: code                    pass
-while 0: code                 pass
-while 0: code / else: code2   code2
-if 0: code2 / else: code2     code2
-code1; return ...; code2      code1; return ...
-code1; raise ...; code2       code1; raise ...
-============================  ======================
++--------------------------+--------------------------+
+| Code                     | Dead code removed        |
++==========================+==========================+
+| ::                       | ::                       |
+|                          |                          |
+|  if 1:                   |  body_block              |
+|      body_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  if 0:                   |  pass                    |
+|      body_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  if False:               |  else_block              |
+|      body_block          |                          |
+|  else:                   |                          |
+|      else_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  while 0:                |  pass                    |
+|      body_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  while 0:                |  else_block              |
+|      body_block          |                          |
+|  else:                   |                          |
+|      else_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  ...                     |  ...                     |
+|  return ...              |  return ...              |
+|  dead_code_block         |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  ...                     |  ...                     |
+|  raise ...               |  raise ...               |
+|  dead_code_block         |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  try:                    |  pass                    |
+|      pass                |                          |
+|  except ...:             |                          |
+|      ...                 |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  try:                    |  else_block              |
+|      pass                |                          |
+|  except ...:             |                          |
+|      ...                 |                          |
+|  else:                   |                          |
+|      else_block          |                          |
++--------------------------+--------------------------+
+| ::                       | ::                       |
+|                          |                          |
+|  try:                    |  try:                    |
+|      pass                |     else_block           |
+|  except ...:             |  finally:                |
+|      ...                 |     final_block          |
+|  else:                   |                          |
+|      else_block          |                          |
+|  finally:                |                          |
+|      final_block         |                          |
++--------------------------+--------------------------+
 
 .. note::
-   If a code block contains ``global``, ``nonlocal``, ``yield`` or ``yield
-   from``, the code block is not removed.
+   If a code block contains ``continue``, ``global``, ``nonlocal``, ``yield``
+   or ``yield from``, it is not removed.
 
 :ref:`Configuration option <fat-config>`: ``remove_dead_code``.
 
