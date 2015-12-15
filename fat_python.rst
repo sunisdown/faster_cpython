@@ -291,6 +291,21 @@ Compute simple operations at the compilation:
 * str, bytes, tuple: ``obj[index]``, ``obj[a:b:c]``
 * replace ``x in list`` with ``x in tuple`` if list only contains constants
 * replace ``x in set`` with ``x in frozenset`` if set only contains constants
+* simplify tests:
+
+===================  ===========================
+Code                 Constant folding
+===================  ===========================
+not(x is y)          x is not y
+not(x is not y)      x is y
+not(obj in seq)      obj not in seq
+not(obj not in seq)  obj in seq
+===================  ===========================
+
+Note: ``not (x == y)`` is not replaced with ``x != y`` because ``not
+x.__eq__(y)`` can be different than ``x.__ne__(y)`` for deliberate reason Same
+rationale for not replacing ``not(x < y)`` with ``x >= y``.  For example,
+``math.nan`` overrides comparison operators to always return ``False``.
 
 Examples of optimizations:
 
@@ -301,10 +316,6 @@ Code                 Constant folding
 +5                   5
 x in [1, 2, 3]       x in (1, 2, 3)
 x in {1, 2, 3}       x in frozenset({1, 2, 3})
-not (x < y)          x >= y
-not (x == y)         x != y
-not (x is y)         x is not y
-not (obj in seq)     obj not in seq
 'Python' * 2         'PythonPython'
 3 * (5,)             (5, 5, 5)
 'python2.7'[:-2]     'python2'
