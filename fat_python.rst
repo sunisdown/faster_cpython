@@ -449,7 +449,7 @@ the ``__astoptimizer__`` variable. Configuration keys:
   to constants <fat-copy-builtin-to-constant>` optimization? (default: false)
 
 * ``remove_dead_code`` (``bool``): enable :ref:`dead code elimination
-  <fat-dead-code>` optimization? (default: false)
+  <fat-dead-code>` optimization? (default: true)
 
 * maximum size of constants:
 
