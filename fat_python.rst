@@ -289,6 +289,7 @@ Compute simple operations at the compilation:
 * bytes: ``bytes + bytes``, ``bytes * int``
 * tuple: ``tuple + tuple``, ``tuple * int``
 * str, bytes, tuple, list: ``obj[index]``, ``obj[a:b:c]``
+* dict: ``obj[index]``
 * replace ``x in list`` with ``x in tuple`` if list only contains constants
 * replace ``x in set`` with ``x in frozenset`` if set only contains constants
 * simplify tests:
