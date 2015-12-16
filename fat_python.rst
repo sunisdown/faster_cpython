@@ -113,7 +113,7 @@ function is called) and the original bytecode is executed.
 Optimizations
 =============
 
-Implementations optimizations:
+Implementated optimizations:
 
 * :ref:`Call pure builtins <fat-call-pure>`
 * :ref:`Loop unrolling <fat-loop-unroll>`
