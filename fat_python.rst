@@ -108,9 +108,23 @@ dictionary keys: ``builtins.__dict__['len']`` and ``globals()['len']``. If one
 of these keys is modified, the specialized bytecode is simply removed (when the
 function is called) and the original bytecode is executed.
 
+.. _fat-optim:
 
 Optimizations
 =============
+
+Implementations optimizations:
+
+* :ref:`Call pure builtins <fat-call-pure>`
+* :ref:`Loop unrolling <fat-loop-unroll>`
+* :ref:`Constant propagation <fat-const-prop>`
+* :ref:`Constant folding <fat-const-fold>`
+* :ref:`Replace builtin constants <fat-replace-builtin-constant>`
+* :ref:`Dead code elimination <fat-dead-code>`
+* :ref:`Copy builtin functions to constants <fat-copy-builtin-to-constant>`
+
+
+.. _fat-call-pure:
 
 Call pure builtins
 ------------------
@@ -533,6 +547,53 @@ Example to disable all optimizations in a module::
 Example to disable the constant folding optimization::
 
     __astoptimizer__ = {'constant_folding': False}
+
+
+Comparison with the peephole optimizer
+======================================
+
+The :ref:`CPython peephole optimizer <cpython-peephole>` only implements a few
+optimizations: :ref:`constant folding <const-fold>` and :ref:`dead code
+elimination <dead-code>`. FAT Python implements more :ref:`optimizations
+<fat-optim>`.
+
+The peephole optimizer doesn't support :ref:`constant propagation
+<fat-const-prop>`. Example::
+
+    def f():
+        x = 333
+        return x
+
++----------------------------------+------------------------------------+
+| Regular bytecode                 | FAT mode bytecode                  |
++==================================+====================================+
+| ::                               | ::                                 |
+|                                  |                                    |
+|   LOAD_CONST               1 (1) |   LOAD_CONST               1 (333) |
+|   STORE_FAST               0 (x) |   STORE_FAST               0 (x)   |
+|   LOAD_FAST                0 (x) |   LOAD_CONST               1 (333) |
+|   RETURN_VALUE                   |   RETURN_VALUE                     |
+|                                  |                                    |
+|                                  |                                    |
++----------------------------------+------------------------------------+
+
+The :ref:`constant folding optimization <const-fold>` of the peephole optimizer
+keeps original constants. For example, ``"x" + "y"`` is replaced with ``"xy"``
+but ``"x"`` and ``"y"`` are kept. Example::
+
+    def f():
+        return "x" + "y"
+
++-----------------------------+------------------------+
+| Regular constants           | FAT mode constants     |
++=============================+========================+
+| ``(None, 'x', 'y', 'xy')``: | ``(None, 'xy')``:      |
+| 4 constants                 | 2 constants            |
++-----------------------------+------------------------+
+
+The peephole optimizer has a similar limitation even when building tuple
+constants. The compiler produces AST nodes of type ``ast.Tuple``, the tuple
+items are kept in code constants.
 
 
 Limitations and Python semantic
