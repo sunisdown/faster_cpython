@@ -7,6 +7,34 @@ New AST Optimizer
 The :ref:`FAT Python <fat-python>` projects comes with a new :ref:`AST optimizer
 <ast-optimizers>` project.
 
+Constants
+=========
+
+FAT Python introduced a new AST type: ``ast.Constant``. The optimizer starts by
+converting ``ast.NameConstant``, ``ast.Num``, ``ast.Str``, ``ast.Bytes`` and
+``ast.Tuple`` to ``ast.Constant``. Later, it can create constant of other
+types. For example, ``frozenset('abc')`` creates a ``frozenset`` constant.
+
+Supported constants:
+
+* ``None`` singleton
+* ``bool``: ``True`` and ``False``
+* numbers: ``int``, ``float``, ``complex``
+* strings: ``bytes``, ``str``
+* containers:  ``tuple``, ``frozenset``
+
+
+Literals
+========
+
+Literals are a superset of constants.
+
+Supported literal types:
+
+* (all constant types)
+* containers: ``list``, ``dict``, ``set``
+
+
 .. _new-ast-optimizer-limits:
 
 Limitations
