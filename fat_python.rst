@@ -967,6 +967,51 @@ To replace ``is_python(filename)`` with ``filename.endswith('.py')`` in
 Implementation
 ==============
 
+Steps and stages
+----------------
+
+The optimizer is splitted into multiple steps. Each optimization has its own
+step: astoptimizer.const_fold.ConstantFolding implements for example constant
+folding.
+
+The function optimizer is splitted into two stages:
+
+* stage 1: run steps which don't require function specialization
+* stage 2: run steps which can add guard and specialize the function
+
+Main classes:
+
+* ModuleOptimizer: Optimizer for ast.Module nodes. It starts by looking for
+  :ref:`__astoptimizer__ configuration <fat-config>`.
+* FunctionOptimizer: Optimizer for ast.FunctionDef nodes. It starts by running
+  FunctionOptimizerStage1.
+* Optimizer: Optimizer for other AST nodes.
+
+Steps used by ModuleOptimizer, Optimizer and FunctionOptimizerStage1:
+
+* NamespaceStep: populate a Namespace object which tracks the local variables,
+  used by ConstantPropagation
+* ReplaceBuiltinConstant: replace builtin optimization
+* ConstantPropagation: constant propagation optimization
+* ConstantFolding: constant folding optimization
+* RemoveDeadCode: dead code elimitation optimization
+
+Steps used by FunctionOptimizer:
+
+* NamespaceStep: populate a Namespace object which tracks the local variables
+* UnrollStep: loop unrolling optimization
+* CallPureBuiltin: call builtin optimization
+* CopyBuiltinToConstantStep: copy builtins to constants optimization
+
+Some optimizations produce a new AST tree which must be optimized again. For
+example, loop unrolling produces new nodes like "i = 0" and duplicates the loop
+body which uses "i". We need to rerun the optimizer on this new AST tree to run
+optimizations like constant propagation or constant folding.
+
+
+Files
+-----
+
 FAT python:
 
 * new builtins.__fat__ variable (bool)
