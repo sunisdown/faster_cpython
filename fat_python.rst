@@ -784,143 +784,10 @@ Non-goal:
   compatible with CPython!
 
 
-Roadmap
-=======
-
-Milestone 1: DONE
------------------
-
-* guard and specialized PoC in Python: DONE
-* optimize guards with modification in CPython internals:
-
-  - add version to dictionaries: DONE
-  - add version to functions: DONE
-
-* implement guards and specialized function in C: DONE
-
-Expected speedup: 10% on specific microbenchmarks, but require to modify the
-source code manually to specialize functions.
-
-Milestone 2: DONE
------------------
-
-* write an AST optimizer:
-
-  - call pure builtin functions at compilation: DONE
-  - generate guards: DONE
-
-* enable the optimizer by default in FAT mode in the site module and
-  ensure that *no* test fails in the Python test suite, running
-  the test suite with -j0 to isolate processes
-
-Expected speedup: no speedup, it's just a milestone to validate the
-implementation. (It's still possible to optimize *manually* code to specialize
-functions, to implement better optimizations.)
-
-
-Milestone 3 (faster)
---------------------
-
-DONE:
-
-* add a configuration to astoptimizer
-* opt-in optimization "copy global to locals", currently used to load builtin
-  functions
-
-TODO:
-
-* configuration to manually help the optimizer:
-
-  - give a whitelist of "constants": app.DEBUG, app.enum.BLUE, ...
-  - type hint with strict types: x is Python int in range [3; 10]
-  - expect platform values to be constant: sys.version_info, sys.maxunicode,
-    os.name, sys.platform, os.linesep, etc.
-  - declare pure functions
-  - see astoptimizer for more ideas
-
-* implement more optimizations:
-
-  - constant folding
-  - detect pure functions in AST and call them at the compilation
-  - function inlining
-  - move invariants out of the loop
-
-* implement code to detect the exact type of function parameters and function
-  locals and save it into an annotation file
-* implement profiling directed optimization: benchmark guards at runtime
-  to decide if it's worth to use a specialized function. Measure maybe also
-  the memory footprint using tracemalloc?
-* implement basic stategy to decide if specialized function must be emitted
-  or not using raw estimation, like the size of the bytecode in bytes
-
-Milestone 4 (goal)
-------------------
-
-* move the optimizer into a new third-party project. Only keep the API for
-  specialized functions with guards
-
-
-Guards on specialized functions
-===============================
-
-To decide if we can use the specialized version of a function, we have to
-ensure that the environment was not modified. We will call these checks
-"guards.
-
-First attempt: "modified" and "readonly" flags
-----------------------------------------------
-
-See :ref:`read-only Python <readonly>`.
-
-
-New try: versionned dictionary
-------------------------------
-
-To reduce the cost of dictionary lookup when checking guards, a subclass of
-dict is added: verdict(), versionned dictionary. A verdict has a global version
-incremented each time that the dict is modified and each mapping (key) has
-a version too, modified when a key is modified. Example::
-
-    >>> import fat
-    >>> d = fat.verdict()
-    >>> d.__version__
-    1
-    >>> d.getversion('a')
-    >>> print(d.getversion('a'))
-    None
-
-    >>> d['a'] = 1
-    >>> d.__version__
-    2
-    >>> print(d.getversion('a'))
-    2
-
-    >>> d['a'] = 2
-    >>> d.__version__
-    3
-    >>> print(d.getversion('a'))
-    3
-
-    >>> del d['a']
-    >>> d.__version__
-    4
-    >>> print(d.getversion('a'))
-    None
-
-A guard only has to lookup for the watched key if the global version is
-modified. Currently, the specialized function is disabled when the value was
-modified, even if the key is modified and restored before the guard is checked.
-The reason for this is that keeping a reference to the watched value can create
-reference leaks and may keep objects alive longer than expected.
-
-For the same reason, the guard doesn't keep a strong reference to the
-dictionary, but a *weak* reference. It's not possible to create a weak
-reference to a dict, but it's possible to create a weak reference to a verdict.
-
 .. _fat-guard:
 
 Guards
-------
+======
 
 Guards:
 
@@ -931,7 +798,7 @@ Guards:
 * ArgTypeGuard: check the type of function arguments
 
 Example: Guard on a builtin function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 
 Example of function::
 
@@ -946,7 +813,7 @@ To replace ``len("abc")``, we have to ensure that:
   globals
 
 Example: Guard to inline a function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Example of function::
 
