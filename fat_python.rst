@@ -557,10 +557,13 @@ the ``__astoptimizer__`` variable. Configuration keys:
 
 * maximum size of constants:
 
-  - ``max_bytes_len``: Maxmimum number of bytes of a text string (default: 128)
+  - ``max_bytes_len``: Maximum number of bytes of a text string (default: 128)
   - ``max_int_bits``: Maximum number of bits of an integer (default: 256)
-  - ``max_str_len``: Maxmimum number of characters of a text string (default: 128)
-  - ``max_constant_size``: Maxmimum size in bytes of other constants
+  - ``max_str_len``: Maximum number of characters of a text string (default: 128)
+  - ``max_seq_len``: Maximum length in number of items of a sequence like
+    tuples (default: 32). It is only a preliminary check: ``max_constant_size``
+    still applies for sequences.
+  - ``max_constant_size``: Maximum size in bytes of other constants
     (default: 128 bytes), the size is computed with ``len(marshal.dumps(obj))``
 
 * ``replace_builtin_constant`` (``bool``): enable :ref:`replace builtin
