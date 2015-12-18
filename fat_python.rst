@@ -122,6 +122,7 @@ Implementated optimizations:
 * :ref:`Replace builtin constants <fat-replace-builtin-constant>`
 * :ref:`Dead code elimination <fat-dead-code>`
 * :ref:`Copy builtin functions to constants <fat-copy-builtin-to-constant>`
+* :ref:`Simplify iterable <fat-simplify-iterable>`
 
 
 .. _fat-call-pure:
@@ -503,6 +504,35 @@ See also the :ref:`load globals and builtins when the module is loaded
 <load-global-optim>` optimization.
 
 
+.. _fat-simplify-iterable:
+
+Simplify iterable
+-----------------
+
+Try to replace literals built at runtime with constants. Replace also
+range(start, stop, step) with a tuple if the range fits in the
+:ref:`configuration <fat-config>`.
+
+When ``range(n)`` is replaced, two guards are required on ``range`` in builtin
+and global namespaces and the function is specialized.
+
+This optimization helps :ref:`loop unrolling <fat-loop-unroll>`.
+
+Examples:
+
+===========================   ===========================
+Code                          Simplified iterable
+===========================   ===========================
+``for x in range(3): ...``    ``for x in (0, 1, 2): ...``
+``for x in {}: ...``          ``for x in (): ...``
+``for x in [4, 5. 6]: ...``   ``for x in (4, 5, 6): ...``
+===========================   ===========================
+
+:ref:`Configuration option <fat-config>`: ``simplify_iterable``.
+
+See also :ref:`constant folding <fat-const-fold>`.
+
+
 .. _fat-config:
 
 Configuration
@@ -535,6 +565,9 @@ the ``__astoptimizer__`` variable. Configuration keys:
 
 * ``replace_builtin_constant`` (``bool``): enable :ref:`replace builtin
   constants <fat-replace-builtin-constant>` optimization? (default: true)
+
+* ``simplify_iterable`` (``bool``): enable :ref:`simplify iterable optimization
+  <fat-simplify-iterable>`? (default: true)
 
 * ``unroll_loops``: Maximum number of loop iteration for loop unrolling
   (default: ``16``). Set it to ``0`` to disable loop unrolling. See
