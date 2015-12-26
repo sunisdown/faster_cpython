@@ -350,7 +350,7 @@ See also the :ref:`constant folding <const-fold>` optimization.
 Replace builtin constants
 -------------------------
 
-Replace ``__debug__`` and ``__fat__`` constants with their value.
+Replace ``__debug__`` constant with its value.
 
 :ref:`Configuration option <fat-config>`: ``replace_builtin_constant``.
 
@@ -924,7 +924,6 @@ Files
 
 FAT python:
 
-* new builtins.__fat__ variable (bool)
 * Object/dictobject.c: add __version__
 * Modules/fat.c: specialized functions with guards
 * Tests
@@ -936,7 +935,6 @@ FAT python:
 
 Other changes:
 
-* Python/bltinmodule.c: add __fat__ builtin symbol
 * Python/ceval.c: bugfixes when builtins is not a dict type
 * Python/sysmodule.c: add sys.flags.fat
 * Modules/main.c: add -F command line option

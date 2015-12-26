@@ -72,8 +72,7 @@ FunctionOptimizer
 =================
 
 ``FunctionOptimizer`` handles ``ast.FunctionDef`` and emits a specialized
-function (protected with ``if __fat__:``) if a call to a builtin function can
-be replaced with its result.
+function if a call to a builtin function can be replaced with its result.
 
 For example, this simple function::
 
@@ -85,17 +84,16 @@ is optimized to::
     def func():
         return chr(65)
 
-    if __fat__:
-        _ast_optimized = func
+    _ast_optimized = func
 
-        def func():
-            return "A"
-        _ast_optimized.specialize(func,
-                                  [{'guard_type': 'builtins', 'name': 'chr'},
-                                   {'guard_type': 'globals', 'name': 'chr'})
+    def func():
+        return "A"
+    _ast_optimized.specialize(func,
+                              [{'guard_type': 'builtins', 'name': 'chr'},
+                               {'guard_type': 'globals', 'name': 'chr'})
 
-        func = _ast_optimized
-        del _ast_optimized
+    func = _ast_optimized
+    del _ast_optimized
 
 
 Detection of free variables
