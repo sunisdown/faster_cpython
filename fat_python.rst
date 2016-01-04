@@ -1021,9 +1021,8 @@ FAT Python API
     guard on globals()['obj']
   - ``{'guard_type': 'type_dict', 'type': MyClass, 'keys': ('attr',)}``:
     guard on MyClass.attr (on ``MyClass.__dict__['attr']``)
-  - ``{'guard_type': 'arg_type', 'arg_index': 0, 'type': str}``:
-    type of the function argument 0 must be str. As ``isinstance()`` function,
-    *type* accepts an iterable of types, ex: ``{..., 'type': (list, tuple)}``.
+  - ``{'guard_type': 'arg_type', 'arg_index': 0, 'arg_types': (str,)}``:
+    type of the function argument 0 must be ``str``.
 
 * func.get_specialized()
 
