@@ -1010,16 +1010,16 @@ FAT Python API
 
   - ``{'guard_type': 'func', 'func': func2}``:
     guard on func2.__code__
-  - ``{'guard_type': 'dict', 'dict': ns, 'key': key}``:
+  - ``{'guard_type': 'dict', 'dict': ns, 'keys': (key,)}``:
     guard on the versionned dictionary ns[key]
-  - ``{'guard_type': 'builtins', 'name': 'len'}``:
+  - ``{'guard_type': 'builtins', 'names': ('len',)}``:
     guard on builtins.len (``builtins.__dict__['len']``) and
     ``globals()['len']``. The specialization is ignored if
     builtins.__dict__['len'] was replaced after the end of Python
     initialization or if globals()['len'] already exists.
-  - ``{'guard_type': 'globals', 'name': 'obj'}``:
+  - ``{'guard_type': 'globals', 'names': ('obj',)}``:
     guard on globals()['obj']
-  - ``{'guard_type': 'type_dict', 'type': MyClass, 'key': 'attr'}``:
+  - ``{'guard_type': 'type_dict', 'type': MyClass, 'keys': ('attr',)}``:
     guard on MyClass.attr (on ``MyClass.__dict__['attr']``)
   - ``{'guard_type': 'arg_type', 'arg_index': 0, 'type': str}``:
     type of the function argument 0 must be str. As ``isinstance()`` function,
