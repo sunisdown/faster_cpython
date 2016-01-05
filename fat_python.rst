@@ -109,11 +109,17 @@ of these keys is modified, the specialized bytecode is simply removed (when the
 function is called) and the original bytecode is executed.
 
 
-Status and TODO
-===============
+Status, TODO and PEPs
+=====================
 
-See the `TODO.rst file
+For the current status and TODO tasks: see the `TODO.rst file
 <https://hg.python.org/sandbox/fatpython/file/tip/TODO.rst>`_.
+
+PEPs:
+
+* 1/3: :ref:`dict.__version__ <pep-dict-version>`
+* 2/3: :ref:`AST optimizer API <pep-ast-optimizer>`
+* 3/3: :ref:`FAT mode, specialized bytecode with guards <pep-fat-mode>`
 
 
 .. _fat-optim:
