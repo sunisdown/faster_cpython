@@ -507,8 +507,17 @@ following :ref:`configuration <fat-config>` at the top of the file::
 :ref:`Configuration option <fat-config>`: ``copy_builtin_to_constant``.
 
 
-See also the :ref:`load globals and builtins when the module is loaded
-<load-global-optim>` optimization.
+See also:
+
+* the :ref:`load globals and builtins when the module is loaded
+  <load-global-optim>` optimization.
+* `codetransformer <https://pypi.python.org/pypi/codetransformer>`_:
+  ``@asconstants(len=len)`` decorator replaces lookups to the ``len`` name
+  with the builtin ``len()`` function
+* Thread on python-ideas mailing list: `Specifying constants for functions
+  <https://mail.python.org/pipermail/python-ideas/2015-October/037028.html>`_
+  by Serhiy Storchaka, propose to add ``const len=len`` (or alternatives)
+  to declare a constant (and indirectly copy a builtin functions to constants)
 
 
 .. _fat-simplify-iterable:
