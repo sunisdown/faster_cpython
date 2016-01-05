@@ -108,6 +108,14 @@ dictionary keys: ``builtins.__dict__['len']`` and ``globals()['len']``. If one
 of these keys is modified, the specialized bytecode is simply removed (when the
 function is called) and the original bytecode is executed.
 
+
+Status and TODO
+===============
+
+See the `TODO.rst file
+<https://hg.python.org/sandbox/fatpython/file/tip/TODO.rst>`_.
+
+
 .. _fat-optim:
 
 Optimizations
