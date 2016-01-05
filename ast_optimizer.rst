@@ -8,9 +8,10 @@ Intro
 =====
 
 An AST optimizer rewrites the Abstract Syntax Tree (AST) of a Python module to
-produce a more efficient code. Currently in CPython 3.5, only basic
-optimizations are implemented by rewriting the bytecode. The optimizer is
-called the "peepholer" and is written in the C language.
+produce a more efficient code.
+
+Currently in CPython 3.5, only basic optimizations are implemented by rewriting
+the bytecode: :ref:`CPython peephole optimizer <cpython-peephole>`.
 
 Old AST optimizer project
 =========================

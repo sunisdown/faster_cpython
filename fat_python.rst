@@ -152,11 +152,6 @@ Example:
 |      return len("abc") |      return 3 |
 +------------------------+---------------+
 
-Bytecode of the specialized function::
-
-    0 LOAD_CONST               1 (3)
-    3 RETURN_VALUE
-
 
 .. _fat-loop-unroll:
 
@@ -667,7 +662,7 @@ implementation must do its best to mimic CPython behaviour. We will call it the
 Python semantic.
 
 FAT Python should not change the Python semantic with the default
-configuration.  Optimizations obvisouly the Python semantic must be disabled by
+configuration.  Optimizations modifting the Python semantic must be disabled by
 default: opt-in options.
 
 As written above, it's really hard to mimic exactly CPython behaviour. For

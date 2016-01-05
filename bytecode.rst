@@ -16,7 +16,7 @@ Optmizations:
 * Some other optimizations more specific to the bytecode, like removal
   of useless jumps and optimizations on conditional jumps
 
-Lastest enhancement::
+Latest enhancement::
 
     changeset:   68375:14205d0fee45
     user:        Antoine Pitrou <solipsis@pitrou.net>
