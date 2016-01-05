@@ -64,6 +64,37 @@ See also the PEP <verdict> which proposes the add a version to dictionaries
 to implement fast guards on namespaces.
 
 
+Python Function Call
+====================
+
+Pseudo-code of a Python function call::
+
+
+    def call_func(func, *args, **kwargs):
+        # by default, call the regular bytecode
+        bytecode = func.__code__.co_code
+        specialized = func.get_specialized()
+        nspecialized = len(specialized)
+
+        index = 0
+        while index < nspecialized:
+            guard = specialized[index].guard
+            # pass arguments, some guards need them
+            check = guard(args, kwargs)
+            if check == 1:
+                # guard succeeded: we can use the specialized bytecode
+                bytecode = specialized[index].bytecode
+                break
+            elif check == -1:
+                # guard will always fail: remove the specialized bytecode
+                del specialized[index]
+            elif check == 0:
+                # guard failed temporarely
+                index += 1
+
+        execute_bytecode(bytecode, args, kwargs)
+
+
 Optimizer
 =========
 
