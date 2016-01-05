@@ -45,7 +45,7 @@ code.
 Working at AST level is simpler. For example, it's easy to match a
 pattern with a new AST node.
 
-This PEP proposes changes, especially the addition of ``sys.asthook``,
+This PEP proposes changes, especially the addition of ``sys.astoptimizer``,
 to support AST optimizers.
 
 
@@ -54,9 +54,11 @@ Changes
 
 Main changes:
 
-* Add ``sys.asthook``: callable with prototype
-  ``def hook(tree, filename)`` used to rewrite an AST tree, ``None`` by
-  default (not used).
+* Add ``sys.astoptimizer``: callable with prototype
+  ``def optimizer(tree, filename)`` used to rewrite an AST tree,
+  ``None`` by default (not used).
+* Add a new compiler flag ``PyCF_OPTIMIZED_AST`` to get the optimized
+  AST, ``PyCF_ONLY_AST`` returns the AST before the optimizer.
 * Add ``ast.Constant``: this type is not emited by the compiler, but
   only used internally in an AST optimizer to simplify the code. It
   doesn't contain line number and column offset informations on tuple or
@@ -69,13 +71,6 @@ Implementation:
 * Enhance compiler to emit correctly constants
 * marshal: fix serialization of the empty frozenset singleton
 * update Tools/parser/unparse.py for ast.Constant
-
-
-Alternatives
-============
-
-Add a new flag, similar to ``PyCF_ONLY_AST``, to get AST without the AST
-hook.
 
 
 Prior Art
