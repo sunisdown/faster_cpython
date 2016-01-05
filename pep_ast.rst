@@ -76,9 +76,10 @@ Implementation:
 Prior Art
 =========
 
-The issue #11549 `Build-out an AST optimizer, moving some functionality
-out of the peephole optimizer <https://bugs.python.org/issue11549>`_
-proposes to add ``ast.Lit`` (or ``ast.Literal``).
+In 2011, Eugene Toder proposes to rewrite the peephole optimizer with
+an AST optimizer: issue #11549, `Build-out an AST optimizer, moving some functionality
+out of the peephole optimizer <https://bugs.python.org/issue11549>`_.
+The patch adds ``ast.Lit`` (it was proposed to renamed it to ``ast.Literal``).
 
 Issue #17515: `Add sys.setasthook() to allow to use a custom AST
 optimizer <https://bugs.python.org/issue17515>`_.

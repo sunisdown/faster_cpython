@@ -188,8 +188,10 @@ PySizer
 Nick Smallbone.
 
 This project has a patch for CPython 2.4 which adds ``key_time`` and
-``value_time`` fields to each dict entry. It uses a global process-wide counter
-for dict incremented each time that a dict is modified.
+``value_time`` fields to each dict entry. It uses a global process-wide
+counter for dict incremented each time that a dict is modified. The
+times are used to decide when child objects first appeared in their
+parent objects.
 
 
 Copyright
