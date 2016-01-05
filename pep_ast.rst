@@ -4,6 +4,16 @@
 PEP: AST optimizer API
 ++++++++++++++++++++++
 
+FAT Python PEPs:
+
+* PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
+* PEP 2/3: :ref:`AST optimizer API <pep-ast-optimizer>`
+* PEP 3/3: :ref:`FAT mode, specialized bytecode with guards <pep-fat-mode>`
+
+.. warning::
+   This PEP is a draft, please wait until it's published on python-ideas
+   or python-dev to discuss it. Or contact me privately.
+
 ::
 
     PEP: xxx
@@ -16,6 +26,7 @@ PEP: AST optimizer API
     Content-Type: text/x-rst
     Created: 4-January-2016
     Python-Version: 3.6
+
 
 Abstract
 ========
@@ -33,6 +44,9 @@ code.
 
 Working at AST level is simpler. For example, it's easy to match a
 pattern with a new AST node.
+
+This PEP proposes changes, especially the addition of ``sys.asthook``,
+to support AST optimizers.
 
 
 Changes
