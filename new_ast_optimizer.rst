@@ -89,8 +89,7 @@ is optimized to::
     def func():
         return "A"
     _ast_optimized.specialize(func,
-                              [{'guard_type': 'builtins', 'name': 'chr'},
-                               {'guard_type': 'globals', 'name': 'chr'})
+                              [{'guard_type': 'builtins', 'names': ('chr',)}])
 
     func = _ast_optimized
     del _ast_optimized
