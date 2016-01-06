@@ -22,7 +22,7 @@ Contents:
    gil.rst
    implementations.rst
    benchmarks.rst
-   pep_ast.rst
+   pep_ast_optimizer.rst
    pep_fat_mode.rst
    pep_dict_version.rst
    links.rst
