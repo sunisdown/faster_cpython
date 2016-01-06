@@ -37,16 +37,36 @@ Propose an API to support AST optimizers.
 Rationale
 =========
 
-CPython 3.5 optimizes the code using a peephole optimizer. The optimizer
-rewrites the bytecode, is written in C and is difficult to enhance. By
-definition, the optimizer is limited because it has a narrow view of the
-code.
+CPython 3.5 optimizes the code using a peephole optimizer. By
+definition, a peephole optimizer has a narrow view of the code and so
+can only implement a few optimizations. The optimizer rewrites the
+bytecode, is written in C and is difficult to enhance.
 
-Working at AST level is simpler. For example, it's easy to match a
-pattern with a new AST node.
+To keep the peephole simple and efficient, optimizations are bypassed if
+the line number table (``code.co_lnotab``) is too complex (when a line
+number delta is larger than 255) or if the bytecode is longer than 32700
+bytes.
 
-This PEP proposes changes, especially the addition of ``sys.astoptimizer``,
-to support AST optimizers.
+Only basic optimizations are implemented: constant folding optimizations
+on jumps and dead code elimination. For example, `constant propagation
+optimization <https://en.wikipedia.org/wiki/Copy_propagation>`_ is not
+implemented whereas it only need a basic knownledge of the code.
+
+Working on the `Abstract Syntax Tree` (AST) level is simpler. It is a
+high-level abstraction which contains more information than bytecode.
+For example, it's easy to match a pattern with a new AST node.
+
+This PEP proposes to add an API to support pluggable AST optimizers.
+
+Some optimizations like constant folding can be rewritten in an AST
+optimizer. Even if most optimizations currently implemented in the
+peephole optimizer can be reimplemented in an AST optimizer, the
+peephole optimizer remains useful since some optimizations are specific
+to the bytecode. For example, optimizations on jumps remains useful on
+the bytecode.
+
+Adding a default AST optimizer is out of the scope of the PEP. Including
+a default AST optimizer to Python will require a separated PEP.
 
 
 Changes
@@ -56,33 +76,47 @@ Main changes:
 
 * Add ``sys.astoptimizer``: callable with prototype
   ``def optimizer(tree, filename)`` used to rewrite an AST tree,
-  ``None`` by default (not used).
+  ``None`` by default (not used). The optimizer is called after the
+  creation of the AST and before the compilation to bytecode.
 * Add a new compiler flag ``PyCF_OPTIMIZED_AST`` to get the optimized
   AST, ``PyCF_ONLY_AST`` returns the AST before the optimizer.
 * Add ``ast.Constant``: this type is not emited by the compiler, but
   only used internally in an AST optimizer to simplify the code. It
   doesn't contain line number and column offset informations on tuple or
   frozenset items.
-* PyCodeObject.co_lnotab: line number delta becomes signed to support
+* ``PyCodeObject.co_lnotab``: line number delta becomes signed to support
   moving instructions => need to modify MAGIC_NUMBER in importlib
 
 Implementation:
 
-* Enhance compiler to emit correctly constants
-* marshal: fix serialization of the empty frozenset singleton
-* update Tools/parser/unparse.py for ast.Constant
+* Enhance the compiler to support ``tuple`` and ``frozenset`` constants.
+  Currently, ``tuple`` and ``frozenset`` constants are created by the
+  peephole optimizer, after the bytecode compilation.
+* ``marshal`` module: fix serialization of the empty frozenset singleton
+* update ``Tools/parser/unparse.py`` to support the new ``ast.Constant``
+  node type
 
 
 Prior Art
 =========
 
-In 2011, Eugene Toder proposes to rewrite the peephole optimizer with
-an AST optimizer: issue #11549, `Build-out an AST optimizer, moving some functionality
-out of the peephole optimizer <https://bugs.python.org/issue11549>`_.
-The patch adds ``ast.Lit`` (it was proposed to renamed it to ``ast.Literal``).
+In 2011, Eugene Toder proposes to rewrite some peephole optimizations in
+a new AST optimizer: issue #11549, `Build-out an AST optimizer, moving
+some functionality out of the peephole optimizer
+<https://bugs.python.org/issue11549>`_.  The patch adds ``ast.Lit`` (it
+was proposed to rename it to ``ast.Literal``).
 
 Issue #17515: `Add sys.setasthook() to allow to use a custom AST
 optimizer <https://bugs.python.org/issue17515>`_.
+
+Previous attempts to implement AST optimizers were abandonned because
+the speedup was negligible compared to the effort to implement them, or
+because optimizations changed the Python semantic.
+
+Supporting specialized bytecode with guards (PEP xxx) allow to implement
+more efficient optimizations without breaking the Python semantic.
+Adding a new ``dict.__version__`` property (PEP yyy) allows to implement
+efficient guards on namespaces to check if a variable was replaced.
 
 
 Copyright
