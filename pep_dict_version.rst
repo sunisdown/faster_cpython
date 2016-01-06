@@ -32,7 +32,7 @@ Abstract
 ========
 
 Add a new read-only ``__version__`` property to ``dict`` and
-``collections.UserDict`` types.
+``collections.UserDict`` types, incremented at each change.
 
 
 Rationale
@@ -84,7 +84,7 @@ updated or deleted)::
 
             value = self.dict.get(self.key, UNSET)
             if value == self.value:
-                # another key was modified: update the version
+                # another key was modified: cache the new dictionary version
                 self.version = version
                 return True
 
@@ -130,14 +130,37 @@ content of the value. Example::
 
 .. note::
    CPython uses some singleton like integers in the range [-5; 257],
-   empty tuple, empty strings, Unicode strings of a single character
-   in the range [U+0000; U+00FF], etc.
+   empty tuple, empty strings, Unicode strings of a single character in
+   the range [U+0000; U+00FF], etc. When a key is set twice to the
+   same singleton, the version is not modified.
 
-The behaviour on integer overflow of the version is undefined.
+``collections.Mapping`` is unchanged. The PEP is designed to implement
+guards on namespaces, whereas generic ``collections.Mapping`` types
+cannot be used for namespaces, only ``dict`` work in practice.
+``collections.UserDict`` is modified because it must mimicks ``dict``.
 
-``collections.Mapping`` is unchanged. The PEP is designed to be used with FAT
-mode to implement effecient guards on namespaces, so version is only needed on
-dict. ``collections.UserDict`` is modified because it must mimicks ``dict``.
+
+Integer overflow
+================
+
+The implementation uses the C unsigned integer type ``size_t`` to store
+the version.  On 32-bit systems, the maximum version is ``2**32-1``
+(more than ``4.2 * 10 ** 9``, 4 billions). On 64-bit systems, the maximum
+version is ``2**64-1`` (more than ``1.8 * 10**19``).
+
+The C code uses ``version++``. The behaviour on integer overflow of the
+version is undefined. The minimum guarantee is that the version always
+changes when the dictionary is modified.
+
+The check ``dict.__version__ == old_version`` can be true after an
+integer overflow, so a guard can return false even if the value changed,
+which is wrong. The bug occurs if the dict must be modified at least ``2**64``
+times (on 64-bit system) between two checks of the guard.
+
+Using a more complex type (ex: ``PyLongObject``) to avoid the overflow
+would slow down operations on the ``dict`` type. Even if there is a
+theorical risk missing a value change, the risk is considered too low
+compared to the slow down of using a more complex type.
 
 
 Alternatives
@@ -146,25 +169,91 @@ Alternatives
 Add a version to each dict entry
 --------------------------------
 
-xxx
+A single version per dictionary requires to keep a strong reference to
+the value which can keep the value alive longer than expected. If we add
+also a version per dictionary entry, the guard can rely on the entry
+version and can avoid the strong reference to the value (only strong
+references to the dictionary and key are needed).
+
+Changes: add a ``getversion(key)`` method to dictionary which returns
+``None`` if the key doesn't exist. When a key is created or modified,
+the entry version is set to the dictionary version which is incremented
+at each change (create, modify, delete).
+
+Pseudo-code of an efficient guard to check if a dict key was modified
+using ``getversion()``::
+
+    UNSET = object()
+
+    class Guard:
+        def __init__(self, dict, key):
+            self.dict = dict
+            self.key = key
+            self.dict_version = dict.__version__
+            self.entry_version = dict.getversion(key)
+
+        def check(self):
+            """Return True if the dict value did not changed."""
+            dict_version = self.dict.__version__
+            if dict_version == self.version:
+                # Fast-path: avoid the dict lookup
+                return True
+
+            entry_version = self.dict.getversion(self.key)
+            if entry_version == self.entry_version:
+                # another key was modified: cache the new dictionary version
+                self.dict_version = dict_version
+                return True
+
+            return False
+
+This main drawback of this option is the impact on the memory footprint.
+It increases the size of each dictionary entry, so the overhead depends
+on the number of buckets (dictionary entries, used or unused yet). For
+example, it increases the size of each dictionary entry by 8 bytes on
+64-bit system if we use ``size_t``.
+
+In Python, the memory footprint matters and the trend is more to reduce
+it. Examples:
+
+* `PEP 412 -- Key-Sharing Dictionary
+  <https://www.python.org/dev/peps/pep-0412/>`_
+* `PEP 393 -- Flexible String Representation
+  <https://www.python.org/dev/peps/pep-0393/>`_
 
 
 Add a new dict subtype
 ----------------------
 
-Leave the dict type unchanged to not add any overhead (memory footprint) on
-regular Python.
+Add a new ``verdict`` type, subtype of ``dict``. When guards are needed,
+use the ``verdict`` for namespaces (module namespace, type namespace,
+instance namespace, etc.) instead of ``dict``.
 
-Technical issues: a lot of C code in the wild, including CPython code base,
-expect the dict type. Issues:
+Leave the ``dict`` type unchanged to not add any overhead (memory
+footprint) when guards are not needed.
 
-* Call directly ``PyDict_xxx()`` functions
-* ``PyDict_CheckExact()`` check
-* Python/ceval.c doesn't completly supports dict subtypes for name lookup
-  (in globals or builtins)
-* exec() requires a dict for globals and locals, many code uses globals={},
-  it's not possible to cast the dict to a subtype because the caller expects
-  its globals parameter to be modified (dict is mutable)
+Technical issue: a lot of C code in the wild, including CPython core,
+expect the exact ``dict`` type. Issues:
+
+* Functions call directly ``PyDict_xxx()`` functions, instead of calling
+  ``PyObject_xxx()`` if the object type is a ``dict`` subtype
+* ``PyDict_CheckExact()`` check fails on ``dict`` subtype, whereas some
+  functions require the exact ``dict`` type.
+* ``Python/ceval.c`` does not completly supports dict subtypes for
+  namespaces
+* ``exec()`` requires a dict for globals and locals, many code uses
+  ``globals={}``. It is not possible to cast the dict to a subtype
+  because the caller expects the ``globals`` parameter to be modified
+  (``dict`` is mutable).
+
+Other issues:
+
+* The garbage collector has a special code to "untrack" ``dict``
+  instances. If a dict subtype is used for namespaces, the garbage
+  collector may be unable to break some reference cycles.
+* Some functions have a fast-path for ``dict`` which would not be taken
+  for ``dict`` subtypes, and so it would make Python a little bit
+  slower.
 
 
 Prior Art
