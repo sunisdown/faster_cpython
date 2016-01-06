@@ -67,8 +67,8 @@ to implement fast guards on namespaces.
 Python Function Call
 ====================
 
-Pseudo-code of a Python function call::
-
+Pseudo-code to call a Python function having specialized bytecode with
+guards::
 
     def call_func(func, *args, **kwargs):
         # by default, call the regular bytecode
@@ -123,17 +123,27 @@ Changes
 * Add two new methods to functions: ``specialize()`` and ``get_specialized()``
 * Implement guards on functions:
 
-  - arg_type: type of a function argument
-  - builtins: builtins.__dict__[key]
-  - dict: dict[key]
-  - func: func.__code__
-  - globals: globals()[key]
-  - type_dict: MyClass.attr
+  - ``"arg_type"``: false if the type of a function argument does not
+    match expected argument types
+  - ``"builtins"``: false if ``builtins.__dict__[key]`` is replaced or
+    if ``globals()[key]`` is created
+  - ``"dict"``: false if ``dict[key]`` is modified
+  - ``"func"``: false if ``func.__code__`` is replaced
+  - ``"globals"``: false if ``globals()[key]`` is modified
+  - ``"type_dict"``: false if ``MyClass.attr`` is modified
 
 * Add ``code.replace_consts(mapping)`` method: create a new code object
   with new constants. Lookup in the mapping for each constant.
+  Pseudo-code to create new constants::
+
+    new_constants = tuple(mapping.get(constant, constant)
+                          for constant in code.co_consts)
+
 * Keep a private copy of builtins, created at the end of the Python
   initialization, used to check if a builtin symbol was replaced
+
+When a function code is replaced (``func.__code__ = new_code``), all
+specialized bytecodes are removed.
 
 
 Effects on object lifetime
