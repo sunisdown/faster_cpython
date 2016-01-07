@@ -118,7 +118,7 @@ For the current status and TODO tasks: see the `TODO.rst file
 FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
-* PEP 2/3: :ref:`AST optimizer API <pep-ast-optimizer>`
+* PEP 2/3: :ref:`AST optimizer API <pep-ast>`
 * PEP 3/3: :ref:`Specialized bytecode with guards <pep-specialize>`
 
 

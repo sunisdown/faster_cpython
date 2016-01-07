@@ -23,6 +23,6 @@ Contents:
    implementations.rst
    benchmarks.rst
    pep_dict_version.rst
-   pep_ast_optimizer.rst
+   pep_ast.rst
    pep_specialize.rst
    links.rst
