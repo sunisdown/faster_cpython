@@ -24,5 +24,5 @@ Contents:
    benchmarks.rst
    pep_dict_version.rst
    pep_ast_optimizer.rst
-   pep_fat_mode.rst
+   pep_specialize.rst
    links.rst
