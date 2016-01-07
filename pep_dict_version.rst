@@ -154,12 +154,12 @@ changes when the dictionary is modified.
 
 The check ``dict.__version__ == old_version`` can be true after an
 integer overflow, so a guard can return false even if the value changed,
-which is wrong. The bug occurs if the dict must be modified at least ``2**64``
+which is wrong. The bug occurs if the dict is modified at least ``2**64``
 times (on 64-bit system) between two checks of the guard.
 
 Using a more complex type (ex: ``PyLongObject``) to avoid the overflow
 would slow down operations on the ``dict`` type. Even if there is a
-theorical risk missing a value change, the risk is considered too low
+theorical risk of missing a value change, the risk is considered too low
 compared to the slow down of using a more complex type.
 
 
@@ -172,8 +172,8 @@ Add a version to each dict entry
 A single version per dictionary requires to keep a strong reference to
 the value which can keep the value alive longer than expected. If we add
 also a version per dictionary entry, the guard can rely on the entry
-version and can avoid the strong reference to the value (only strong
-references to the dictionary and key are needed).
+version and so avoid the strong reference to the value (only strong
+references to a dictionary and key are needed).
 
 Changes: add a ``getversion(key)`` method to dictionary which returns
 ``None`` if the key doesn't exist. When a key is created or modified,
@@ -199,6 +199,8 @@ using ``getversion()``::
                 # Fast-path: avoid the dict lookup
                 return True
 
+            # lookup in the dictionary, but get the entry version,
+            #not the value
             entry_version = self.dict.getversion(self.key)
             if entry_version == self.entry_version:
                 # another key was modified: cache the new dictionary version
@@ -216,10 +218,10 @@ example, it increases the size of each dictionary entry by 8 bytes on
 In Python, the memory footprint matters and the trend is more to reduce
 it. Examples:
 
-* `PEP 412 -- Key-Sharing Dictionary
-  <https://www.python.org/dev/peps/pep-0412/>`_
 * `PEP 393 -- Flexible String Representation
   <https://www.python.org/dev/peps/pep-0393/>`_
+* `PEP 412 -- Key-Sharing Dictionary
+  <https://www.python.org/dev/peps/pep-0412/>`_
 
 
 Add a new dict subtype
@@ -235,21 +237,24 @@ footprint) when guards are not needed.
 Technical issue: a lot of C code in the wild, including CPython core,
 expect the exact ``dict`` type. Issues:
 
+* ``exec()`` requires a ``dict`` for globals and locals. A lot of code
+  use ``globals={}``. It is not possible to cast the ``dict`` to a
+  ``dict`` subtype because the caller expects the ``globals`` parameter
+  to be modified (``dict`` is mutable).
 * Functions call directly ``PyDict_xxx()`` functions, instead of calling
-  ``PyObject_xxx()`` if the object type is a ``dict`` subtype
+  ``PyObject_xxx()`` if the object is a ``dict`` subtype
 * ``PyDict_CheckExact()`` check fails on ``dict`` subtype, whereas some
   functions require the exact ``dict`` type.
 * ``Python/ceval.c`` does not completly supports dict subtypes for
   namespaces
-* ``exec()`` requires a dict for globals and locals, many code uses
-  ``globals={}``. It is not possible to cast the dict to a subtype
-  because the caller expects the ``globals`` parameter to be modified
-  (``dict`` is mutable).
+
+
+The ``exec()`` issue is a blocker issue.
 
 Other issues:
 
 * The garbage collector has a special code to "untrack" ``dict``
-  instances. If a dict subtype is used for namespaces, the garbage
+  instances. If a ``dict`` subtype is used for namespaces, the garbage
   collector may be unable to break some reference cycles.
 * Some functions have a fast-path for ``dict`` which would not be taken
   for ``dict`` subtypes, and so it would make Python a little bit
@@ -273,14 +278,14 @@ See also the thread on python-dev: `About dictionary lookup caching
 PySizer
 -------
 
-`PySizer <http://pysizer.8325.org/>`_: Google Summer of Code 2005 project by
-Nick Smallbone.
+`PySizer <http://pysizer.8325.org/>`_: a memory profiler for Python,
+Google Summer of Code 2005 project by Nick Smallbone.
 
 This project has a patch for CPython 2.4 which adds ``key_time`` and
-``value_time`` fields to each dict entry. It uses a global process-wide
-counter for dict incremented each time that a dict is modified. The
-times are used to decide when child objects first appeared in their
-parent objects.
+``value_time`` fields to dictionary entries. It uses a global
+process-wide counter for dictionaries, incremented each time that a
+dictionary is modified. The times are used to decide when child objects
+first appeared in their parent objects.
 
 
 Copyright
