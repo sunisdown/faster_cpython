@@ -274,6 +274,14 @@ The patch adds a private ``timestamp`` field to dict.
 See also the thread on python-dev: `About dictionary lookup caching
 <https://mail.python.org/pipermail/python-dev/2006-December/070348.html>`_.
 
+Globals / builtins cache
+------------------------
+
+In 2010, Antoine Pitrou proposed a `Globals / builtins cache
+<http://bugs.python.org/issue10401>`_ which adds a private version
+field to dictionaries. The patch adds a "global and builtin cache" to
+functions.
+
 
 PySizer
 -------
