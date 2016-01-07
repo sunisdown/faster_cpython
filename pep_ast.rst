@@ -37,6 +37,9 @@ Propose an API to support AST optimizers and add a "FAT" mode.
 Rationale
 =========
 
+Optimize the AST, not the bytecode
+----------------------------------
+
 CPython 3.5 optimizes the code using a peephole optimizer. By
 definition, a peephole optimizer has a narrow view of the code and so
 can only implement a few optimizations. The optimizer rewrites the
@@ -58,6 +61,13 @@ For example, it's easy to match a pattern with a new AST node.
 
 This PEP proposes to add an API to support pluggable AST optimizers.
 
+Adding a default AST optimizer is out of the scope of the PEP. Including
+a default AST optimizer to Python will require a separated PEP.
+
+
+Future of the peephole optimizer
+--------------------------------
+
 Some optimizations like constant folding can be rewritten in an AST
 optimizer. Even if most optimizations currently implemented in the
 peephole optimizer can be reimplemented in an AST optimizer, the
@@ -65,8 +75,9 @@ peephole optimizer remains useful since some optimizations are specific
 to the bytecode. For example, optimizations on jumps remains useful on
 the bytecode.
 
-Adding a default AST optimizer is out of the scope of the PEP. Including
-a default AST optimizer to Python will require a separated PEP.
+
+FAT Mode
+--------
 
 Optimizations more expensive than basic optimizations implemented in the
 current peephole optimizer are expected. That's why a new "FAT mode" is
@@ -87,10 +98,10 @@ Changes
 * Add ``sys.flags.fat``
 * ``importlib`` module: new filename for ``.pyc`` files in FAT mode. Example:
 
-  - Lib/__pycache__/os.cpython-36.pyc: default mode
-  - Lib/__pycache__/os.cpython-36.fat-0.pyc: FAT mode
+  - ``Lib/__pycache__/os.cpython-36.pyc``: default mode
+  - ``Lib/__pycache__/os.cpython-36.fat-0.pyc``: FAT mode
 
-Main changes:
+AST optimizer API:
 
 * Add ``sys.astoptimizer``: callable with prototype
   ``def optimizer(tree, filename)`` used to rewrite an AST tree,
@@ -105,7 +116,7 @@ Main changes:
 * ``PyCodeObject.co_lnotab``: line number delta becomes signed to support
   moving instructions => need to modify MAGIC_NUMBER in importlib
 
-Implementation:
+AST optimizer implementation changes:
 
 * Enhance the compiler to support ``tuple`` and ``frozenset`` constants.
   Currently, ``tuple`` and ``frozenset`` constants are created by the
