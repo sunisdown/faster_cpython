@@ -133,16 +133,6 @@ Changes
   * ``int first_check(PyObject *guard, PyObject *func)``: return 0 on
     success, -1 if the guard will always fail
 
-* Add ``code.replace_consts(mapping)`` method: create a new code object
-  with new constants. Lookup in the mapping for each constant.
-  Pseudo-code to create new constants::
-
-    new_constants = tuple(mapping.get(constant, constant)
-                          for constant in code.co_consts)
-
-* Keep a private copy of builtins, created at the end of the Python
-  initialization, used to check if a builtin symbol was replaced
-
 
 Behaviour
 =========
