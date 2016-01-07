@@ -97,6 +97,34 @@ Implementation:
   node type
 
 
+Example
+=======
+
+Optimizer replacing all strings with ``"Ni! Ni! Ni!"``::
+
+    import ast
+    import sys
+
+
+    class Optimizer(ast.NodeTransformer):
+        def visit_Str(self, node):
+            node.s = 'Ni! Ni! Ni!'
+            return node
+
+
+    def optimizer(tree, filename):
+        Optimizer().visit(tree)
+        return tree
+
+
+    sys.astoptimizer = optimizer
+    exec("print('Hello World!')")
+
+Output::
+
+    Ni! Ni! Ni!
+
+
 Prior Art
 =========
 
