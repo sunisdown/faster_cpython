@@ -146,6 +146,9 @@ Output::
 Prior Art
 =========
 
+AST optimizers
+--------------
+
 In 2011, Eugene Toder proposes to rewrite some peephole optimizations in
 a new AST optimizer: issue #11549, `Build-out an AST optimizer, moving
 some functionality out of the peephole optimizer
@@ -155,6 +158,10 @@ was proposed to rename it to ``ast.Literal``).
 Issue #17515: `Add sys.setasthook() to allow to use a custom AST
 optimizer <https://bugs.python.org/issue17515>`_.
 
+`astoptimizer <https://bitbucket.org/haypo/astoptimizer/>`_ is an AST
+optimizer implementing various optimizations. Most interesting
+optimizations break the Python semantic.
+
 Previous attempts to implement AST optimizers were abandonned because
 the speedup was negligible compared to the effort to implement them, or
 because optimizations changed the Python semantic.
@@ -163,6 +170,33 @@ Supporting specialized bytecode with guards (PEP xxx) allow to implement
 more efficient optimizations without breaking the Python semantic.
 Adding a new ``dict.__version__`` property (PEP yyy) allows to implement
 efficient guards on namespaces to check if a variable was replaced.
+
+Python Preprocessors
+--------------------
+
+* `MacroPy <https://github.com/lihaoyi/macropy>`_: MacroPy is an
+  implementation of Syntactic Macros in the Python Programming Language.
+  MacroPy provides a mechanism for user-defined functions (macros) to
+  perform transformations on the abstract syntax tree (AST) of a Python
+  program at import time.
+* `pypreprocessor <https://code.google.com/p/pypreprocessor/>`_: C-style
+  preprocessor directives in Python, like ``#define`` and ``#ifdef``
+
+Modify the bytecode
+-------------------
+
+* `codetransformer <https://pypi.python.org/pypi/codetransformer>`_:
+  Bytecode transformers for CPython inspired by the ``ast`` module’s
+  ``NodeTransformer``.
+* `byteplay <http://code.google.com/p/byteplay/>`_: Byteplay lets you
+  convert Python code objects into equivalent objects which are easy to
+  play with, and lets you convert those objects back into living Python
+  code objects. It's useful for applying crazy transformations on Python
+  functions, and is also useful in learning Python byte code
+  intricacies. See `byteplay documentation
+  <http://wiki.python.org/moin/ByteplayDoc>`_.
+
+See also `BytecodeAssembler <http://pypi.python.org/pypi/BytecodeAssembler>`_.
 
 
 Copyright
