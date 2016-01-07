@@ -55,6 +55,30 @@ See also the PEP <verdict> which proposes the add a version to dictionaries
 to implement fast guards on namespaces.
 
 
+Example
+=======
+
+Replace a call to builtin function with its result::
+
+    def func():
+        return len("abc")
+
+    def fast_func():
+        return 3
+
+    func.specialize(fast_func.__code__, [fat.GuardBuiltin("len")])
+
+    del fast_func
+
+``fat.GuardBuiltin("len")`` is a guard on the builtin ``len()`` function
+and the ``len`` name in the global namespace. The guard is false if the
+builtin function is replaced or if a ``len`` name is defined in the
+global namespace.
+
+Calling ``func()`` will simply return ``3``, but will switch back to
+calling the builtin ``len()`` function if the guard becomes false.
+
+
 Python Function Call
 ====================
 
