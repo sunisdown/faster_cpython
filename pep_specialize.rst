@@ -45,20 +45,21 @@ semantic requires to detect when "something changes", we will call these
 checks "guards".
 
 This PEP proposes to add a ``specialize()`` method to functions to add a
-specialized bytecode with guards. When the function is called, guards
-are checked. If guards checks of a specialized bytecode are ok, it is
-used. The specialized bytecode is removed if guards cannot be true
-anymore. Otherwise, guards will be checked again at the next function
-call.
+specialized bytecode with guards. When the function is called, the
+specialized bytecode if used if nothing changed, otherwise use the
+original bytecode.
 
-See also the PEP <verdict> which proposes the add a version to dictionaries
-to implement fast guards on namespaces.
+See also the PEP <dict_version> which proposes the add a version to
+dictionaries to implement fast guards on namespaces.
 
 
 Example
 =======
 
-Replace a call to builtin function with its result::
+Replace a call to builtin function with the result using an hypothetical
+``myoptimizer`` module::
+
+    import myoptimizer
 
     def func():
         return len("abc")
@@ -66,17 +67,17 @@ Replace a call to builtin function with its result::
     def fast_func():
         return 3
 
-    func.specialize(fast_func.__code__, [fat.GuardBuiltin("len")])
+    func.specialize(fast_func.__code__, [myoptimizer.GuardBuiltin("len")])
 
     del fast_func
 
-``fat.GuardBuiltin("len")`` is a guard on the builtin ``len()`` function
-and the ``len`` name in the global namespace. The guard is false if the
+``GuardBuiltin("len")`` is a guard on the builtin ``len()`` function and
+the ``len`` name in the global namespace. The guard is false if the
 builtin function is replaced or if a ``len`` name is defined in the
 global namespace.
 
-Calling ``func()`` will simply return ``3``, but will switch back to
-calling the builtin ``len()`` function if the guard becomes false.
+Calling ``func()`` will directly return ``3``, but will switch back to
+calling the builtin ``len()`` function if something changed.
 
 
 Python Function Call
@@ -124,23 +125,27 @@ This PEP is related to the PEP <astoptimizer> but this PEP is not strictly a
 dependency. External optimizers are free to pick any method to produce
 optimized bytecode.
 
-Including one specific optimizer into CPython will require a separated PEP.
-
 
 Changes
 =======
 
-* Add two new methods to functions: ``specialize()`` and ``get_specialized()``
-* Implement guards on functions:
+* Add two new methods to functions:
 
-  - ``"arg_type"``: false if the type of a function argument does not
-    match expected argument types
-  - ``"builtins"``: false if ``builtins.__dict__[key]`` is replaced or
-    if ``globals()[key]`` is created
-  - ``"dict"``: false if ``dict[key]`` is modified
-  - ``"func"``: false if ``func.__code__`` is replaced
-  - ``"globals"``: false if ``globals()[key]`` is modified
-  - ``"type_dict"``: false if ``MyClass.attr`` is modified
+  - ``specialize(bytecode: code, guards: list)``: add specialized
+    bytecode with guard. The specialization can be ignored if a guard
+    already fails.
+  - ``get_specialized()``: get the list of specialized bytecodes with
+    guards
+
+* Base ``Guard`` type which can be used as parent type to implement
+  guards. It requires to implement a ``check()`` function, with an
+  optional ``first_check()`` function. API:
+
+  * ``int check(PyObject *guard, PyObject **stack)``: return 1 on
+    success, 0 if the guard failed temporarely, -1 if the guard will
+    always fail
+  * ``int first_check(PyObject *guard, PyObject *func)``: return 0 on
+    success, -1 if the guard will always fail
 
 * Add ``code.replace_consts(mapping)`` method: create a new code object
   with new constants. Lookup in the mapping for each constant.
@@ -156,24 +161,6 @@ When a function code is replaced (``func.__code__ = new_code``), all
 specialized bytecodes are removed.
 
 
-Effects on object lifetime
-==========================
-
-Guards keep strong references to different objects:
-
-* dict guards (builtins, dict, globals, type_dict): strong reference to
-  dict, watched keys and related values
-* arg type guard: strong reference to argument types
-* func guard: strong reference to func2.__code__
-
-Weak references:
-
-* func guard: weak reference to func2
-
-.. note::
-   It's not possible to create a weak reference to a dict.
-
-
 Issues
 ======
 
@@ -181,11 +168,8 @@ The following issues must probably be fixed or decided before the PEP is
 published:
 
 * Keywords are not supported yet
-* The list of supported guards is limited, new guards cannot be
-  implemented at runtime :-/
 * Functions must remain serializable: ignore specialization? serialize
   specialized?
-* Python modules and python imports are not supported yet!
 
 
 Copyright
