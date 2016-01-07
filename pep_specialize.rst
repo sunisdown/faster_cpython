@@ -49,8 +49,7 @@ specialized functions with guards. When the function is called, the
 specialized function is used if nothing changed, otherwise use the
 original bytecode.
 
-See also the PEP <dict_version> which proposes the add a version to
-dictionaries to implement fast guards on namespaces.
+Writing an optimizer is out of the scope of this PEP.
 
 
 Example
@@ -112,16 +111,6 @@ guards::
         execute_code(code, args, kwargs)
 
 
-Optimizer
-=========
-
-Writing an optimizer is out of the scope of this PEP.
-
-This PEP is related to the PEP <astoptimizer> but this PEP is not strictly a
-dependency. External optimizers are free to pick any method to produce
-optimized bytecode.
-
-
 Changes
 =======
 
@@ -154,18 +143,15 @@ Changes
 * Keep a private copy of builtins, created at the end of the Python
   initialization, used to check if a builtin symbol was replaced
 
+
+Behaviour
+=========
+
 When a function code is replaced (``func.__code__ = new_code``), all
 specialized functions are removed.
 
-
-Issues
-======
-
-The following issues must probably be fixed or decided before the PEP is
-published:
-
-* Functions must remain serializable: ignore specialization? serialize
-  specialized?
+When a function is serialized (by ``marshal`` or ``pickle`` for
+example), specialized functions and guards are ignored (not serialized).
 
 
 Copyright
