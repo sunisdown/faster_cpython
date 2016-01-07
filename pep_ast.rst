@@ -42,22 +42,22 @@ Optimize the AST, not the bytecode
 
 CPython 3.5 optimizes the code using a peephole optimizer. By
 definition, a peephole optimizer has a narrow view of the code and so
-can only implement a few optimizations. The optimizer rewrites the
-bytecode, is written in C and is difficult to enhance.
+can only implement basic optimizations. The optimizer rewrites the
+bytecode. It is difficult to enhance because it written in C.
 
-To keep the peephole simple and efficient, optimizations are bypassed if
-the line number table (``code.co_lnotab``) is too complex (when a line
-number delta is larger than 255) or if the bytecode is longer than 32700
-bytes.
+To keep the peephole optimizer simple and efficient, optimizations are
+bypassed if the line number table (``code.co_lnotab``) is too complex
+(when a line number delta is larger than 255) or if the bytecode is
+longer than 32700 bytes.
 
-Only basic optimizations are implemented: constant folding optimizations
-on jumps and dead code elimination. For example, `constant propagation
-optimization <https://en.wikipedia.org/wiki/Copy_propagation>`_ is not
-implemented whereas it only need a basic knownledge of the code.
+Only basic optimizations are implemented: constant folding, optimizations
+on jumps and dead code elimination. For example, the `constant
+propagation optimization
+<https://en.wikipedia.org/wiki/Copy_propagation>`_ is not implemented
+because it requires a better knownledge of the code.
 
 Working on the `Abstract Syntax Tree` (AST) level is simpler. It is a
 high-level abstraction which contains more information than bytecode.
-For example, it's easy to match a pattern with a new AST node.
 
 This PEP proposes to add an API to support pluggable AST optimizers.
 
@@ -79,6 +79,8 @@ the bytecode.
 FAT Mode
 --------
 
+XXX rewrite this section.
+
 Optimizations more expensive than basic optimizations implemented in the
 current peephole optimizer are expected. That's why a new "FAT mode" is
 introduced.  Python .py files are compiled to .pyc when modules and
@@ -91,6 +93,9 @@ aware of the issues".
 
 Changes
 =======
+
+XXX replace the FAT mode boolean with a list of short strings used to
+build the .pyc filename?
 
 "FAT" mode:
 
