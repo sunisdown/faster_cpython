@@ -1,14 +1,14 @@
 .. _pep-specialize:
 
-+++++++++++++++++++++++++++++++++++++
-PEP: Specialized bytecode with guards
-+++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++
+PEP: Specialized functions with guards
+++++++++++++++++++++++++++++++++++++++
 
 FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
 * PEP 2/3: :ref:`AST optimizer API <pep-ast>`
-* PEP 3/3: :ref:`Specialized bytecode with guards <pep-specialize>`
+* PEP 3/3: :ref:`Specialized functions with guards <pep-specialize>`
 
 .. warning::
    This PEP is a draft, please wait until it's published on python-ideas
@@ -17,7 +17,7 @@ FAT Python PEPs:
 ::
 
     PEP: xxx
-    Title: Specialized bytecode with guards
+    Title: Specialized functions with guards
     Version: $Revision$
     Last-Modified: $Date$
     Author: Victor Stinner <victor.stinner@gmail.com>
@@ -31,7 +31,7 @@ FAT Python PEPs:
 Abstract
 ========
 
-Add an API to add specialized bytecode with guards to functions, to
+Add an API to add specialized functions with guards to functions, to
 support static optimizers respecting the Python semantic.
 
 
@@ -45,8 +45,8 @@ semantic requires to detect when "something changes", we will call these
 checks "guards".
 
 This PEP proposes to add a ``specialize()`` method to functions to add a
-specialized bytecode with guards. When the function is called, the
-specialized bytecode if used if nothing changed, otherwise use the
+specialized functions with guards. When the function is called, the
+specialized function is used if nothing changed, otherwise use the
 original bytecode.
 
 See also the PEP <dict_version> which proposes the add a version to
@@ -83,12 +83,12 @@ calling the builtin ``len()`` function if something changed.
 Python Function Call
 ====================
 
-Pseudo-code to call a Python function having specialized bytecode with
+Pseudo-code to call a Python function having specialized functions with
 guards::
 
     def call_func(func, *args, **kwargs):
         # by default, call the regular bytecode
-        bytecode = func.__code__.co_code
+        code = func.__code__.co_code
         specialized = func.get_specialized()
         nspecialized = len(specialized)
 
@@ -98,28 +98,24 @@ guards::
             # pass arguments, some guards need them
             check = guard(args, kwargs)
             if check == 1:
-                # guard succeeded: we can use the specialized bytecode
-                bytecode = specialized[index].bytecode
+                # guard succeeded: we can use the specialized function
+                code = specialized[index].code
                 break
             elif check == -1:
-                # guard will always fail: remove the specialized bytecode
+                # guard will always fail: remove the specialized function
                 del specialized[index]
             elif check == 0:
                 # guard failed temporarely
                 index += 1
 
-        execute_bytecode(bytecode, args, kwargs)
+        # code can be a code object or any callable object
+        execute_code(code, args, kwargs)
 
 
 Optimizer
 =========
 
-The bytecode specialization is out of the scope of this PEP.
-
-The FAT Python project includes an AST optimizer which implements various
-optimizations. The optimizer is expected to move faster than the release cycle
-of CPython and so will be developed out of the CPython source code tree. It
-also avoid to have to pay the price of backward compatibility.
+Writing an optimizer is out of the scope of this PEP.
 
 This PEP is related to the PEP <astoptimizer> but this PEP is not strictly a
 dependency. External optimizers are free to pick any method to produce
@@ -131,10 +127,11 @@ Changes
 
 * Add two new methods to functions:
 
-  - ``specialize(bytecode: code, guards: list)``: add specialized
-    bytecode with guard. The specialization can be ignored if a guard
-    already fails.
-  - ``get_specialized()``: get the list of specialized bytecodes with
+  - ``specialize(code, guards: list)``: add specialized
+    function with guard. `code` is a code object (ex:
+    ``func2.__code__``) or any callable object (ex: ``len``).
+    The specialization can be ignored if a guard already fails.
+  - ``get_specialized()``: get the list of specialized functions with
     guards
 
 * Base ``Guard`` type which can be used as parent type to implement
@@ -158,7 +155,7 @@ Changes
   initialization, used to check if a builtin symbol was replaced
 
 When a function code is replaced (``func.__code__ = new_code``), all
-specialized bytecodes are removed.
+specialized functions are removed.
 
 
 Issues
@@ -167,7 +164,6 @@ Issues
 The following issues must probably be fixed or decided before the PEP is
 published:
 
-* Keywords are not supported yet
 * Functions must remain serializable: ignore specialization? serialize
   specialized?
 
