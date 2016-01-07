@@ -8,7 +8,7 @@ FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
 * PEP 2/3: :ref:`AST optimizer API <pep-ast-optimizer>`
-* PEP 3/3: :ref:`FAT mode, specialized bytecode with guards <pep-fat-mode>`
+* PEP 3/3: :ref:`Specialized bytecode with guards <pep-fat-mode>`
 
 .. warning::
    This PEP is a draft, please wait until it's published on python-ideas
@@ -31,7 +31,7 @@ FAT Python PEPs:
 Abstract
 ========
 
-Propose an API to support AST optimizers.
+Propose an API to support AST optimizers and add a "FAT" mode.
 
 
 Rationale
@@ -68,9 +68,27 @@ the bytecode.
 Adding a default AST optimizer is out of the scope of the PEP. Including
 a default AST optimizer to Python will require a separated PEP.
 
+Optimizations more expensive than basic optimizations implemented in the
+current peephole optimizer are expected. That's why a new "FAT mode" is
+introduced.  Python .py files are compiled to .pyc when modules and
+applications are installed, but for scripts, the bytecode is compiled at
+runtime. Moreover, some optimizations may break the Python semantic in
+subtle ways. Having to enable explicitly the FAT mode is required to say
+"ok, I make compromises on the Python semantic for performance, I am
+aware of the issues".
+
 
 Changes
 =======
+
+"FAT" mode:
+
+* Add a new ``-F`` command line option to enable FAT mode
+* Add ``sys.flags.fat``
+* ``importlib`` module: new filename for ``.pyc`` files in FAT mode. Example:
+
+  - Lib/__pycache__/os.cpython-36.pyc: default mode
+  - Lib/__pycache__/os.cpython-36.fat-0.pyc: FAT mode
 
 Main changes:
 

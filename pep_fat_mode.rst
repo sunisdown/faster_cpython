@@ -1,14 +1,14 @@
 .. _pep-fat-mode:
 
-+++++++++++++
-PEP: FAT Mode
-+++++++++++++
++++++++++++++++++++++++++++++++++++++
+PEP: Specialized bytecode with guards
++++++++++++++++++++++++++++++++++++++
 
 FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
 * PEP 2/3: :ref:`AST optimizer API <pep-ast-optimizer>`
-* PEP 3/3: :ref:`FAT mode, specialized bytecode with guards <pep-fat-mode>`
+* PEP 3/3: :ref:`Specialized bytecode with guards <pep-fat-mode>`
 
 .. warning::
    This PEP is a draft, please wait until it's published on python-ideas
@@ -17,7 +17,7 @@ FAT Python PEPs:
 ::
 
     PEP: xxx
-    Title: Add a new FAT mode for specialized bytecode with guards
+    Title: Specialized bytecode with guards
     Version: $Revision$
     Last-Modified: $Date$
     Author: Victor Stinner <victor.stinner@gmail.com>
@@ -31,8 +31,8 @@ FAT Python PEPs:
 Abstract
 ========
 
-Add a new FAT mode for specialized bytecode with guards: API to
-implement static optimizers for Python respecting the Python semantic.
+Add an API to add specialized bytecode with guards to functions, to
+support static optimizers respecting the Python semantic.
 
 
 Rationale
@@ -50,15 +50,6 @@ are checked. If guards checks of a specialized bytecode are ok, it is
 used. The specialized bytecode is removed if guards cannot be true
 anymore. Otherwise, guards will be checked again at the next function
 call.
-
-Optimizations more expensive than basic optimizations implemented in the
-current peephole optimizer are expected. That's why a new "FAT mode" is
-introduced.  Python .py files are compiled to .pyc when modules and
-applications are installed, but for scripts, the bytecode is compiled at
-runtime. Moreover, some optimizations may break the Python semantic in
-subtle ways. Having to enable explicitly the FAT mode is required to say
-"ok, I make compromises on the Python semantic for performance, I am
-aware of the issues".
 
 See also the PEP <verdict> which proposes the add a version to dictionaries
 to implement fast guards on namespaces.
@@ -115,11 +106,6 @@ Including one specific optimizer into CPython will require a separated PEP.
 Changes
 =======
 
-"FAT" mode:
-
-* Add a new ``-F`` command line option to enable FAT mode
-* Add ``sys.flags.fat``
-* ``importlib`` module: new filename for ``.pyc`` files in FAT mode
 * Add two new methods to functions: ``specialize()`` and ``get_specialized()``
 * Implement guards on functions:
 
@@ -162,14 +148,6 @@ Weak references:
 
 .. note::
    It's not possible to create a weak reference to a dict.
-
-
-Alternative: add subtype of function
-====================================
-
-To avoid completly any overhead on the memory footprint, an alternative
-is to not modify the default builtin function type, but instead create a
-subtype which has the two new methods, and use this subtype in FAT mode.
 
 
 Issues
