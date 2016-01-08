@@ -4,7 +4,7 @@
 PEP: dict.__version__
 +++++++++++++++++++++
 
-FAT Python PEPs:
+:ref:`FAT Python <fat-python>` PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
 * PEP 2/3: :ref:`Specialized functions with guards <pep-specialize>`
