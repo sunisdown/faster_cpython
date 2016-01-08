@@ -7,12 +7,11 @@ PEP: dict.__version__
 FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
-* PEP 2/3: :ref:`API for AST transformers <pep-ast>`
-* PEP 3/3: :ref:`Specialized functions with guards <pep-specialize>`
+* PEP 2/3: :ref:`Specialized functions with guards <pep-specialize>`
+* PEP 3/3: :ref:`API for AST transformers <pep-ast>`
 
-.. warning::
-   This PEP is a draft, please wait until it's published on python-ideas
-   or python-dev to discuss it. Or contact me privately.
+Thread on the python-ideas mailing list: `RFC: PEP: Add dict.__version__
+<https://mail.python.org/pipermail/python-ideas/2016-January/037702.html>`_.
 
 ::
 
