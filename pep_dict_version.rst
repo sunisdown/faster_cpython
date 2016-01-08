@@ -347,7 +347,8 @@ Globals / builtins cache
 In 2010, Antoine Pitrou proposed a `Globals / builtins cache
 <http://bugs.python.org/issue10401>`_ which adds a private
 ``ma_version`` field to the ``dict`` type. The patch adds a "global and
-builtin cache" to functions.
+builtin cache" to functions and frames, and changes ``LOAD_GLOBAL`` and
+``STORE_GLOBAL`` instructions to use the cache.
 
 
 PySizer
