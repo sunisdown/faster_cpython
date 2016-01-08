@@ -132,7 +132,6 @@ AST transformer API:
   frozenset items.
 * ``PyCodeObject.co_lnotab``: line number delta becomes signed to support
   moving instructions (note: need to modify MAGIC_NUMBER in importlib).
-* Add ``sys.implementation.ast_transformers``: list of transformer names
 
 Optimization tag:
 
@@ -144,14 +143,6 @@ Optimization tag:
   - ``Lib/__pycache__/os.cpython-36.pyc``: default filename
   - ``Lib/__pycache__/os.cpython-36.fat-0.pyc``: with the optimization
     tag ``"fat"``
-
-XXX Clarify how transformers are supposed to be registered. Currently,
-they have no name.
-
-XXX Define what do if the ``.pyc`` is missing and the required
-transformer is not registered. Ignore the transformer and use the
-``.py`` file without writing the ``.pyc`` file? It may make performances
-worse (not writing any ``.pyc`` file).
 
 AST transformer implementation changes:
 
