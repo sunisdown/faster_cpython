@@ -7,7 +7,7 @@ PEP: dict.__version__
 FAT Python PEPs:
 
 * PEP 1/3: :ref:`dict.__version__ <pep-dict-version>`
-* PEP 2/3: :ref:`AST optimizer API <pep-ast>`
+* PEP 2/3: :ref:`API for AST transformers <pep-ast>`
 * PEP 3/3: :ref:`Specialized functions with guards <pep-specialize>`
 
 .. warning::
