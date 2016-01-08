@@ -55,28 +55,92 @@ Writing an optimizer is out of the scope of this PEP.
 Example
 =======
 
-Replace a call to builtin function with the result using an hypothetical
-``myoptimizer`` module::
+Using bytecode
+--------------
+
+Replace ``chr(65)`` with ``"A"``::
 
     import myoptimizer
 
     def func():
-        return len("abc")
+        return chr(65)
 
     def fast_func():
-        return 3
+        return "A"
 
-    func.specialize(fast_func.__code__, [myoptimizer.GuardBuiltin("len")])
-
+    func.specialize(fast_func.__code__, [myoptimizer.GuardBuiltins("chr")])
     del fast_func
 
-``GuardBuiltin("len")`` is a guard on the builtin ``len()`` function and
-the ``len`` name in the global namespace. The guard is false if the
-builtin function is replaced or if a ``len`` name is defined in the
-global namespace.
+    print("func(): %s" % func())
+    print("#specialized: %s" % len(func.get_specialized()))
+    print()
 
-Calling ``func()`` will directly return ``3``, but will switch back to
-calling the builtin ``len()`` function if something changed.
+    import builtins
+    builtins.chr = lambda obj: "mock"
+
+    print("func(): %s" % func())
+    print("#specialized: %s" % len(func.get_specialized()))
+
+Output::
+
+    func(): A
+    #specialized: 1
+
+    func(): mock
+    #specialized: 0
+
+The hypothetical ``myoptimizer.GuardBuiltins("len")`` is a guard on the
+builtin ``len()`` function and the ``len`` name in the global namespace.
+The guard fails if the builtin function is replaced or if a ``len`` name
+is defined in the global namespace.
+
+The first call returns directly the string ``"A"``. The second call
+removes the specialized function because the builtin ``chr()`` function
+was replaced, and executes the original bytecode
+
+On a microbenchmark, calling the specialized function takes 88 ns,
+whereas the original bytecode takes 145 ns (+57 ns): 1.6 times as fast.
+
+
+Using builtin function
+----------------------
+
+Replace a slow Python function calling ``chr(obj)`` with a direct call
+to the builtin ``chr()`` function::
+
+    import myoptimizer
+
+    def func(arg):
+        return chr(arg)
+
+    func.specialize(chr, [myoptimizer.GuardBuiltins("chr")])
+
+    print("func(65): %s" % func(65))
+    print("#specialized: %s" % len(func.get_specialized()))
+    print()
+
+    import builtins
+    builtins.chr = lambda obj: "mock"
+
+    print("func(65): %s" % func(65))
+    print("#specialized: %s" % len(func.get_specialized()))
+
+Output::
+
+    func(): A
+    #specialized: 1
+
+    func(): mock
+    #specialized: 0
+
+The first call returns directly the builtin ``chr()`` function (without
+creating a Python frame). The second call removes the specialized
+function because the builtin ``chr()`` function was replaced, and
+executes the original bytecode.
+
+On a microbenchmark, calling the specialized function takes 95 ns,
+whereas the original bytecode takes 155 ns (+60 ns): 1.6 times as fast.
+Calling directly ``chr(65)`` takes 76 ns.
 
 
 Python Function Call
@@ -132,6 +196,15 @@ Changes
     always fail
   * ``int first_check(PyObject *guard, PyObject *func)``: return 0 on
     success, -1 if the guard will always fail
+
+Microbenchmark on ``python3.6 -m timeit -s 'def f(): pass' 'f()'`` (best
+of 3 runs):
+
+* Original Python: 79 ns
+* Patched Python: 79 ns
+
+According to this microbenchmark, the changes has no overhead on calling
+a Python function without specialization.
 
 
 Behaviour
