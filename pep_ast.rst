@@ -64,6 +64,54 @@ specified, separated by ``-``. For example, use ``'fat-pythran'`` to run
 the ``fat`` transformer and then the ``pythran`` transformer.
 
 
+Use Cases
+=========
+
+Interactive interpreter
+-----------------------
+
+It should be possible to use AST transformers with the interactive
+interpreter. It is popular in Python and commonly used to demonstrate
+Python.
+
+Build a transformed package
+---------------------------
+
+It should be possible to build a package of the transformed code.
+
+The package filename must be different to be able to install the
+original package.
+
+A transformer can have a configuration. The configuration is not stored
+in the package. It is not possible to build two flavors of a package
+with two different configurations with different filenames. Only one
+package per combination of AST transformers can be build.
+
+All ``.pyc`` files of the package must be transformed with the same AST
+transformers and the same transformers configuration.
+
+
+Install a transformed package
+-----------------------------
+
+It should be possible to install a package with specific
+transformations. For example, install the optimized package or install
+the regular package.
+
+
+Run a transformed package
+-------------------------
+
+It should be possible to run a transformed package.
+
+If a ``.pyc`` is missing and the required AST transformers are
+available, Python creates the missing ``.pyc`` files on demand.
+
+If a ``.pyc`` is missing and at least one required AST transformer is
+missing, Python fails with an ``ImportError``. ``.py`` files are not
+used. ``.pyc`` files are not written nor modified.
+
+
 Changes
 =======
 
