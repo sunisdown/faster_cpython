@@ -261,6 +261,49 @@ Other issues:
   slower.
 
 
+Potential users of dict.__version__
+===================================
+
+astoptimizer of FAT Python
+--------------------------
+
+The astoptimizer of FAT Python implements many optimizations which require
+guards on namespaces. Examples:
+
+* Call pure builtins: to replace ``len("abc")``, guards on
+  ``builtins.__dict__['len']`` and ``globals()['len']`` are required
+* Loop unrolling: to unroll loops using ``range(...)``, guards on
+  ``builtins.__dict__['range']`` and ``globals()['range']`` are required
+
+The `FAT Python <http://faster-cpython.readthedocs.org/fat_python.html>`_ is a
+static optimizer for Python 3.6.
+
+
+Pyjion
+------
+
+According of Brett Cannon, one of the two main developers of Pyjion, Pyjion can
+also benefit from dictionary version to implement optimizations.
+
+Pyjion is a JIT compiler for Python based upon CoreCLR (Microsoft .NET Core
+runtime).
+
+
+Unladen Swallow
+---------------
+
+Even if dictionary version was not explicitly mentionned, optimization globals
+and builtins lookup was part of the Unladen Swallow plan: "Implement one of the
+several proposed schemes for speeding lookups of globals and builtins."
+
+Source: `Unladen Swallow ProjectPlan
+<https://code.google.com/p/unladen-swallow/wiki/ProjectPlan>`_.
+
+Unladen Swallow is a fork of CPython 2.6.1 adding a JIT compiler implemented
+with LLVM. The project stopped in 2011: `Unladen Swallow Retrospective
+<http://qinsb.blogspot.com.au/2011/03/unladen-swallow-retrospective.html>`_.
+
+
 Prior Art
 =========
 
@@ -273,6 +316,7 @@ The patch adds a private ``timestamp`` field to dict.
 
 See also the thread on python-dev: `About dictionary lookup caching
 <https://mail.python.org/pipermail/python-dev/2006-December/070348.html>`_.
+
 
 Globals / builtins cache
 ------------------------
