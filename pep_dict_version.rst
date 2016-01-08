@@ -34,37 +34,49 @@ Abstract
 Add a new read-only ``__version__`` property to ``dict`` and
 ``collections.UserDict`` types, incremented at each change.
 
+Operations incrementing the version:
+
+* ``clear()`` if the dict was non-empty
+* ``pop(key)`` if the key exists
+* ``popitem()`` if the dict is non-empty
+* ``setdefault(key, value)`` if the `key` does not exist
+* ``__detitem__(key)`` if the key exists
+* ``__setitem__(key, value)`` if the `key` doesn't exist of if the value
+  is different
+* ``update(...)`` if new values are different than existing values
+
 
 Rationale
 =========
 
-In Python, the dict type is used by many instructions. For example, the
-``LOAD_GLOBAL`` instruction searchs for a variable in the global namespace, or
-in the builtins namespace if the variable in not found in globals (two dict
-lookups). Python uses dict for the builtins namespace, globals namespace, type
-namespaces, instance namespaces, etc. The local namespace is usually optimized
-to an array, but it can be a dict too.
+In Python, the builtin ``dict`` type is used by many instructions. For
+example, the ``LOAD_GLOBAL`` instruction searchs for a variable in the
+global namespace, or in the builtins namespace (two dict lookups).
+Python uses ``dict`` for the builtins namespace, globals namespace, type
+namespaces, instance namespaces, etc. The local namespace (namespace of
+a function) is usually optimized to an array, but it can be a dict too.
 
 Python is hard to optimize because almost everything is mutable: builtin
 functions, function code, global variables, local variables, ... can be
-modified at runtime. Implement optimizations respecting the Python semantic
-requires to detect when "something changes", we will call these checks
-"guards".  The speedup of optimizations depends on the speed of guard checks.
+modified at runtime. Implementing optimizations respecting the Python
+semantic requires to detect when "something changes": we will call these
+checks "guards".
 
-This PEP proposes to add a version to dictionaries to implement efficient
+The speedup of optimizations depends on the speed of guard checks. This
+PEP proposes to add a version to dictionaries to implement efficient
 guards on namespaces.
 
-Example of optimization: replace loading a global variable with a constant.
-This optimization requires a guard on the global variable to check if it was
-modified. If the variable is modified, the variable must be loaded at runtime,
-instead of using the old copy.
+Example of optimization: replace loading a global variable with a
+constant.  This optimization requires a guard on the global variable to
+check if it was modified. If the variable is modified, the variable must
+be loaded at runtime, instead of using the constant.
 
 
 Guard example
 =============
 
-Pseudo-code of an efficient guard to check if a dict key was modified (created,
-updated or deleted)::
+Pseudo-code of an efficient guard to check if a dictionary key was
+modified (created, updated or deleted)::
 
     UNSET = object()
 
@@ -76,15 +88,16 @@ updated or deleted)::
             self.version = dict.__version__
 
         def check(self):
-            """Return True if the dict value did not changed."""
+            """Return True if the dictionary value did not changed."""
             version = self.dict.__version__
             if version == self.version:
-                # Fast-path: avoid the dict lookup
+                # Fast-path: avoid the dictionary lookup
                 return True
 
             value = self.dict.get(self.key, UNSET)
             if value == self.value:
-                # another key was modified: cache the new dictionary version
+                # another key was modified:
+                # cache the new dictionary version
                 self.version = version
                 return True
 
@@ -94,26 +107,34 @@ updated or deleted)::
 Changes
 =======
 
-Add a read-only ``__version__`` property to builtin dict type and
-collections.UserDict.
+Add a read-only ``__version__`` property to builtin ``dict`` type and to
+the ``collections.UserDict`` type.
 
-New empty dictionaries are initilized to version 1. The version is incremented
-at each change: new key is set, a key is modified or a key is removed.
+New empty dictionaries are initilized to version ``0``. The version is
+incremented at each change: new key is set, a key is modified or a key
+is removed.
 
 Example::
 
     >>> d = {}
     >>> d.__version__
-    1
+    0
     >>> d['key'] = 'value'
     >>> d.__version__
-    2
+    1
     >>> d['key'] = 'new value'
     >>> d.__version__
-    3
+    2
     >>> del d['key']
     >>> d.__version__
-    4
+    3
+
+If a dictionary is created with items, the version is also incremented
+at each dictionary insertion. Example::
+
+    >>> d=dict(x=7, y=33)
+    >>> d.__version__
+    2
 
 The version is not incremented is an existing key is modified to the
 same value, but only the identifier of the value is tested, not the
@@ -131,13 +152,13 @@ content of the value. Example::
 .. note::
    CPython uses some singleton like integers in the range [-5; 257],
    empty tuple, empty strings, Unicode strings of a single character in
-   the range [U+0000; U+00FF], etc. When a key is set twice to the
-   same singleton, the version is not modified.
+   the range [U+0000; U+00FF], etc. When a key is set twice to the same
+   singleton, the version is not modified.
 
-``collections.Mapping`` is unchanged. The PEP is designed to implement
-guards on namespaces, whereas generic ``collections.Mapping`` types
-cannot be used for namespaces, only ``dict`` work in practice.
-``collections.UserDict`` is modified because it must mimicks ``dict``.
+The PEP is designed to implement guards on namespaces, only the ``dict``
+type can be used for namespaces in practice.  ``collections.UserDict``
+is modified because it must mimicks ``dict``. ``collections.Mapping`` is
+unchanged.
 
 
 Integer overflow
@@ -193,17 +214,18 @@ using ``getversion()``::
             self.entry_version = dict.getversion(key)
 
         def check(self):
-            """Return True if the dict value did not changed."""
+            """Return True if the dictionary value did not changed."""
             dict_version = self.dict.__version__
             if dict_version == self.version:
-                # Fast-path: avoid the dict lookup
+                # Fast-path: avoid the dictionary lookup
                 return True
 
             # lookup in the dictionary, but get the entry version,
             #not the value
             entry_version = self.dict.getversion(self.key)
             if entry_version == self.entry_version:
-                # another key was modified: cache the new dictionary version
+                # another key was modified:
+                # cache the new dictionary version
                 self.dict_version = dict_version
                 return True
 
@@ -261,21 +283,23 @@ Other issues:
   slower.
 
 
-Potential users of dict.__version__
-===================================
+Usage of dict.__version__
+=========================
 
 astoptimizer of FAT Python
 --------------------------
 
-The astoptimizer of FAT Python implements many optimizations which require
-guards on namespaces. Examples:
+The astoptimizer of the FAT Python project implements many optimizations
+which require guards on namespaces. Examples:
 
-* Call pure builtins: to replace ``len("abc")``, guards on
+* Call pure builtins: to replace ``len("abc")`` with ``3``, guards on
   ``builtins.__dict__['len']`` and ``globals()['len']`` are required
-* Loop unrolling: to unroll loops using ``range(...)``, guards on
-  ``builtins.__dict__['range']`` and ``globals()['range']`` are required
+* Loop unrolling: to unroll the loop ``for i in range(...): ...``,
+  guards on ``builtins.__dict__['range']`` and ``globals()['range']``
+  are required
 
-The `FAT Python <http://faster-cpython.readthedocs.org/fat_python.html>`_ is a
+The `FAT Python
+<http://faster-cpython.readthedocs.org/fat_python.html>`_ project is a
 static optimizer for Python 3.6.
 
 
@@ -295,7 +319,6 @@ Unladen Swallow
 Even if dictionary version was not explicitly mentionned, optimization globals
 and builtins lookup was part of the Unladen Swallow plan: "Implement one of the
 several proposed schemes for speeding lookups of globals and builtins."
-
 Source: `Unladen Swallow ProjectPlan
 <https://code.google.com/p/unladen-swallow/wiki/ProjectPlan>`_.
 
@@ -314,7 +337,7 @@ In 2006, Andrea Griffini proposes a patch implementing a `Cached
 globals+builtins lookup optimization <https://bugs.python.org/issue1616125>`_.
 The patch adds a private ``timestamp`` field to dict.
 
-See also the thread on python-dev: `About dictionary lookup caching
+See the thread on python-dev: `About dictionary lookup caching
 <https://mail.python.org/pipermail/python-dev/2006-December/070348.html>`_.
 
 
@@ -322,9 +345,9 @@ Globals / builtins cache
 ------------------------
 
 In 2010, Antoine Pitrou proposed a `Globals / builtins cache
-<http://bugs.python.org/issue10401>`_ which adds a private version
-field to dictionaries. The patch adds a "global and builtin cache" to
-functions.
+<http://bugs.python.org/issue10401>`_ which adds a private
+``ma_version`` field to the ``dict`` type. The patch adds a "global and
+builtin cache" to functions.
 
 
 PySizer
