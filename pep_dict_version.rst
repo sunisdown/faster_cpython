@@ -34,17 +34,6 @@ Abstract
 Add a new read-only ``__version__`` property to ``dict`` and
 ``collections.UserDict`` types, incremented at each change.
 
-Operations incrementing the version:
-
-* ``clear()`` if the dict was non-empty
-* ``pop(key)`` if the key exists
-* ``popitem()`` if the dict is non-empty
-* ``setdefault(key, value)`` if the `key` does not exist
-* ``__detitem__(key)`` if the key exists
-* ``__setitem__(key, value)`` if the `key` doesn't exist of if the value
-  is different
-* ``update(...)`` if new values are different than existing values
-
 
 Rationale
 =========
@@ -108,7 +97,17 @@ Changes
 =======
 
 Add a read-only ``__version__`` property to builtin ``dict`` type and to
-the ``collections.UserDict`` type.
+the ``collections.UserDict`` type. The version is incremented at each
+change:
+
+* ``clear()`` if the dict was non-empty
+* ``pop(key)`` if the key exists
+* ``popitem()`` if the dict is non-empty
+* ``setdefault(key, value)`` if the `key` does not exist
+* ``__detitem__(key)`` if the key exists
+* ``__setitem__(key, value)`` if the `key` doesn't exist of if the value
+  is different
+* ``update(...)`` if new values are different than existing values
 
 New empty dictionaries are initilized to version ``0``. The version is
 incremented at each change: new key is set, a key is modified or a key
