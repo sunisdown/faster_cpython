@@ -37,10 +37,11 @@ Propose an API to support AST transformers.
 Rationale
 =========
 
-Python does not provide a standard way to transform the code. Various
-hooks are used. The MacroPy project uses an import hook: it adds its own
-module finder in ``sys.meta_path`` to inject its AST transformer.
-Another option is to monkey-patch the builtin ``compile()`` function.
+Python does not provide a standard way to transform the code. Projects
+transforming the code use various hooks. The MacroPy project uses an
+import hook: it adds its own module finder in ``sys.meta_path`` to
+hook its AST transformer. Another option is to monkey-patch the
+builtin ``compile()`` function.
 
 Transforming the code allows to extend the Python language for specific
 needs. Transforming an Abstract Syntax Tree (AST) is a convenient way to
@@ -52,15 +53,15 @@ definition, a peephole optimizer has a narrow view of the code and so
 can only implement basic optimizations. The optimizer rewrites the
 bytecode. It is difficult to enhance because it written in C.
 
-This PEP proposes to add an API to register an AST transformer.
+This PEP proposes to add an API to register AST transformers.
 
 A new ``-o OPTIM_TAG`` command line option is also added to enable AST
-transformers and use different a ``.pyc`` filename.  The usage is to
-produce the transformed code on one computer and use it a different
+transformers and use a different ``.pyc`` filename.  It is possible to
+produce the transformed code on one computer and use it on a different
 computer which does not have the transformer. It allows to implement
 expensive but powerful transformations. Multiple transformers can be
-specified, separated by ``-``. Example: ``'fat-pythran'`` to run FAT
-Python and than Pythran transformers.
+specified, separated by ``-``. For example, use ``'fat-pythran'`` to run
+the ``fat`` transformer and then the ``pythran`` transformer.
 
 
 Changes
@@ -68,20 +69,21 @@ Changes
 
 AST transformer API:
 
-* Add ``sys.asttransformers``: list of callable with the prototype
+* Add ``sys.ast_transformers``: list of callable with the prototype
   ``def ast_transformer(tree, filename)`` used to rewrite an AST tree.
   The list of empty by default (no AST transformer). The transformer is
   called after the creation of the AST by the parser and before the
-  compilation to bytecode.
+  compilation to bytecode. It must return an AST tree. It can modify the
+  AST tree in place, or create a new AST tree.
 * Add a new compiler flag ``PyCF_TRANSFORMED_AST`` to get the
-  transformed AST, ``PyCF_ONLY_AST`` returns the AST before the
+  transformed AST. ``PyCF_ONLY_AST`` returns the AST before the
   transformers.
 * Add ``ast.Constant``: this type is not emited by the compiler, but
-  only used internally in an AST transformer to simplify the code. It
-  doesn't contain line number and column offset informations on tuple or
+  can be used in an AST transformer to simplify the code. It does not
+  contain line number and column offset informations on tuple or
   frozenset items.
 * ``PyCodeObject.co_lnotab``: line number delta becomes signed to support
-  moving instructions => need to modify MAGIC_NUMBER in importlib
+  moving instructions (note: need to modify MAGIC_NUMBER in importlib).
 * Add ``sys.implementation.ast_transformers``: list of transformer names
 
 Optimization tag:
@@ -94,6 +96,14 @@ Optimization tag:
   - ``Lib/__pycache__/os.cpython-36.pyc``: default filename
   - ``Lib/__pycache__/os.cpython-36.fat-0.pyc``: with the optimization
     tag ``"fat"``
+
+XXX Clarify how transformers are supposed to be registered. Currently,
+they have no name.
+
+XXX Define what do if the ``.pyc`` is missing and the required
+transformer is not registered. Ignore the transformer and use the
+``.py`` file without writing the ``.pyc`` file? It may make performances
+worse (not writing any ``.pyc`` file).
 
 AST transformer implementation changes:
 
@@ -108,7 +118,7 @@ AST transformer implementation changes:
 Example
 =======
 
-Optimizer replacing all strings with ``"Ni! Ni! Ni!"``::
+Amazing AST transformer replacing all strings with ``"Ni! Ni! Ni!"``::
 
     import ast
     import sys
@@ -125,7 +135,7 @@ Optimizer replacing all strings with ``"Ni! Ni! Ni!"``::
         return tree
 
 
-    sys.asttransformer = ast_transformer
+    sys.ast_transformers.append(ast_transformer)
     exec("print('Hello World!')")
 
 Output::
@@ -139,21 +149,16 @@ Prior Art
 AST optimizers
 --------------
 
-Eugene Toder patch
-^^^^^^^^^^^^^^^^^^
-
 In 2011, Eugene Toder proposes to rewrite some peephole optimizations in
 a new AST optimizer: issue #11549, `Build-out an AST optimizer, moving
 some functionality out of the peephole optimizer
 <https://bugs.python.org/issue11549>`_.  The patch adds ``ast.Lit`` (it
 was proposed to rename it to ``ast.Literal``).
 
-astoptimizer
-^^^^^^^^^^^^
-
 `astoptimizer <https://bitbucket.org/haypo/astoptimizer/>`_ is an AST
-optimizer implementing various optimizations. Most interesting
-optimizations break the Python semantic.
+optimizer implementing various optimizations, but most interesting
+optimizations break the Python semantic (no guard is used to disable
+optimization if something changes).
 
 Issue #17515: `Add sys.setasthook() to allow to use a custom AST
 optimizer <https://bugs.python.org/issue17515>`_.
