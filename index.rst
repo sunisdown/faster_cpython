@@ -25,4 +25,5 @@ Contents:
    pep_dict_version.rst
    pep_ast.rst
    pep_specialize.rst
+   pypy.rst
    links.rst
