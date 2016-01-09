@@ -234,6 +234,16 @@ with LLVM. The project stopped in 2011: `Unladen Swallow Retrospective
 <http://qinsb.blogspot.com.au/2011/03/unladen-swallow-retrospective.html>`_.
 
 
+Implementation
+==============
+
+See the `issue #26058: Add dict.__version__ read-only property
+<https://bugs.python.org/issue26058>`_.
+
+On pybench and timeit microbenchmarks, the patch does not seem to add
+any overhead on dictionary operations.
+
+
 Alternatives
 ============
 
