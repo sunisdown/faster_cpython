@@ -164,9 +164,8 @@ the version.  On 32-bit systems, the maximum version is ``2**32-1``
 (more than ``4.2 * 10 ** 9``, 4 billions). On 64-bit systems, the maximum
 version is ``2**64-1`` (more than ``1.8 * 10**19``).
 
-The C code uses ``version++``. The behaviour on integer overflow of the
-version is undefined. The minimum guarantee is that the version always
-changes when the dictionary is modified.
+The C code uses ``version++``. On integer overflow, the version is
+wrapped to ``0`` (and then continue to be incremented).
 
 The check ``dict.__version__ == old_version`` can be true after an
 integer overflow, so a guard can return false even if the value changed,
@@ -177,6 +176,62 @@ Using a more complex type (ex: ``PyLongObject``) to avoid the overflow
 would slow down operations on the ``dict`` type. Even if there is a
 theorical risk of missing a value change, the risk is considered too low
 compared to the slow down of using a more complex type.
+
+
+Usage of dict.__version__
+=========================
+
+Detect dictionary mutation during iteration
+-------------------------------------------
+
+Currently, iterating on a dictionary only detects when the dictionary
+size changes, but not when keys or values are modified. Using the
+dictionary version, it would be possible to detect when keys and values
+are modified.
+
+See the `issue #19332: Guard against changing dict during iteration
+<https://bugs.python.org/issue19332>`_.
+
+
+astoptimizer of FAT Python
+--------------------------
+
+The astoptimizer of the FAT Python project implements many optimizations
+which require guards on namespaces. Examples:
+
+* Call pure builtins: to replace ``len("abc")`` with ``3``, guards on
+  ``builtins.__dict__['len']`` and ``globals()['len']`` are required
+* Loop unrolling: to unroll the loop ``for i in range(...): ...``,
+  guards on ``builtins.__dict__['range']`` and ``globals()['range']``
+  are required
+
+The `FAT Python
+<http://faster-cpython.readthedocs.org/fat_python.html>`_ project is a
+static optimizer for Python 3.6.
+
+
+Pyjion
+------
+
+According of Brett Cannon, one of the two main developers of Pyjion, Pyjion can
+also benefit from dictionary version to implement optimizations.
+
+Pyjion is a JIT compiler for Python based upon CoreCLR (Microsoft .NET Core
+runtime).
+
+
+Unladen Swallow
+---------------
+
+Even if dictionary version was not explicitly mentionned, optimization globals
+and builtins lookup was part of the Unladen Swallow plan: "Implement one of the
+several proposed schemes for speeding lookups of globals and builtins."
+Source: `Unladen Swallow ProjectPlan
+<https://code.google.com/p/unladen-swallow/wiki/ProjectPlan>`_.
+
+Unladen Swallow is a fork of CPython 2.6.1 adding a JIT compiler implemented
+with LLVM. The project stopped in 2011: `Unladen Swallow Retrospective
+<http://qinsb.blogspot.com.au/2011/03/unladen-swallow-retrospective.html>`_.
 
 
 Alternatives
@@ -278,52 +333,19 @@ Other issues:
   slower.
 
 
-Usage of dict.__version__
-=========================
-
-astoptimizer of FAT Python
---------------------------
-
-The astoptimizer of the FAT Python project implements many optimizations
-which require guards on namespaces. Examples:
-
-* Call pure builtins: to replace ``len("abc")`` with ``3``, guards on
-  ``builtins.__dict__['len']`` and ``globals()['len']`` are required
-* Loop unrolling: to unroll the loop ``for i in range(...): ...``,
-  guards on ``builtins.__dict__['range']`` and ``globals()['range']``
-  are required
-
-The `FAT Python
-<http://faster-cpython.readthedocs.org/fat_python.html>`_ project is a
-static optimizer for Python 3.6.
-
-
-Pyjion
-------
-
-According of Brett Cannon, one of the two main developers of Pyjion, Pyjion can
-also benefit from dictionary version to implement optimizations.
-
-Pyjion is a JIT compiler for Python based upon CoreCLR (Microsoft .NET Core
-runtime).
-
-
-Unladen Swallow
----------------
-
-Even if dictionary version was not explicitly mentionned, optimization globals
-and builtins lookup was part of the Unladen Swallow plan: "Implement one of the
-several proposed schemes for speeding lookups of globals and builtins."
-Source: `Unladen Swallow ProjectPlan
-<https://code.google.com/p/unladen-swallow/wiki/ProjectPlan>`_.
-
-Unladen Swallow is a fork of CPython 2.6.1 adding a JIT compiler implemented
-with LLVM. The project stopped in 2011: `Unladen Swallow Retrospective
-<http://qinsb.blogspot.com.au/2011/03/unladen-swallow-retrospective.html>`_.
-
-
 Prior Art
 =========
+
+Guard against changing dict during iteration
+--------------------------------------------
+
+In 2013, Serhiy Storchaka proposed a patch for the `issue #19332: Guard
+against changing dict during iteration
+<https://bugs.python.org/issue19332>`_ (mentioned above) which adds a
+``size_t ma_count`` field to the ``PyDictObject`` structure. This field
+is incremented when the dictionary is modified, and so is very similar
+to the proposed ``dict.__version__``.
+
 
 Cached globals+builtins lookup
 ------------------------------
