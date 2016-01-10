@@ -10,6 +10,7 @@ Faster Python implementations
   - AST optimizer of PyPy:
     `astcompiler/optimize.py <https://bitbucket.org/pypy/pypy/src/default/pypy/interpreter/astcompiler/optimize.py>`_
 
+* `Pyston <https://github.com/dropbox/pyston>`_
 * `Hotpy <http://code.google.com/p/hotpy/>`_
   and `Hotpy 2 <https://bitbucket.org/markshannon/hotpy_2>`_,
   based on `GVMT <http://code.google.com/p/gvmt/>`_ (Glasgow Virtual
@@ -46,7 +47,7 @@ Fully Python compliant
 Other
 -----
 
-* Numba: JIT implemented with LLVM, specialized to numeric types (numpy)
+* `Numba <http://numba.pydata.org/>`_: JIT implemented with LLVM, specialized to numeric types (numpy)
 * Replace stack-based bytecode with register-based bytecode: old registervm
   project
 
