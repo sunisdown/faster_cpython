@@ -8,7 +8,7 @@ See also :ref:`AST optimizers <ast-optimizers>`.
 
 https://bitbucket.org/haypo/astoptimizer/ was a first attempt to optimize
 Python. This project was rejected by the Python community because it breaks the
-Python semantic. For example, it replaces ``len("abc")`` with ``3``. It checks
+Python semantics. For example, it replaces ``len("abc")`` with ``3``. It checks
 that ``len()`` was not overriden in the module, but it doesn't check that the
 builtin ``len()`` function was not overriden.
 

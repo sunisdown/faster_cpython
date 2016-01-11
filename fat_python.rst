@@ -506,9 +506,9 @@ The optimization on the builtin ``NAME`` requires two guards:
 * ``NAME`` key in global namespace
 
 This optimization is disabled by default because it changes the :ref:`Python
-semantic <fat-python-semantic>`: if the copied builtin function is replaced in
-the middle of the function, the specialized bytecode still uses the old builtin
-function. To use the optimization on a project, you may have to add the
+semantics <fat-python-semantics>`: if the copied builtin function is replaced
+in the middle of the function, the specialized bytecode still uses the old
+builtin function. To use the optimization on a project, you may have to add the
 following :ref:`configuration <fat-config>` at the top of the file::
 
     __astoptimizer__ = {'copy_builtin_to_constant': False}
@@ -662,22 +662,22 @@ Limitations and Python semantic
 
 FAT Python bets that the Python code is not modified when modules are loaded,
 but only later, when functions and classes are executed. If this assumption is
-wrong, FAT Python changes the semantic of Python.
+wrong, FAT Python changes the semantics of Python.
 
-.. _fat-python-semantic:
+.. _fat-python-semantics:
 
-Python semantic
----------------
+Python semantics
+----------------
 
 It is very hard, to not say impossible, to implementation and keep the exact
 behaviour of regular CPython. CPython implementation is used as the Python
 "standard". Since CPython is the most popular implementation, a Python
 implementation must do its best to mimic CPython behaviour. We will call it the
-Python semantic.
+Python semantics.
 
-FAT Python should not change the Python semantic with the default
-configuration.  Optimizations modifting the Python semantic must be disabled by
-default: opt-in options.
+FAT Python should not change the Python semantics with the default
+configuration.  Optimizations modifting the Python semantics must be disabled
+by default: opt-in options.
 
 As written above, it's really hard to mimic exactly CPython behaviour. For
 example, in CPython, it's technically possible to modify local variables of a
@@ -698,7 +698,7 @@ function ensures that the builtin function ``chr()`` was not modified, but
 will continue to call the old ``chr()`` function.
 
 The :ref:`copy builtin functions to constants <fat-copy-builtin-to-constant>`
-optimization changes the Python semantic. If a builtin function is replaced
+optimization changes the Python semantics. If a builtin function is replaced
 while the specialized function is optimized, the specialized function will
 continue to use the old builtin function. For this reason, the optimization
 is disabled by default.

@@ -196,7 +196,7 @@ was proposed to rename it to ``ast.Literal``).
 
 `astoptimizer <https://bitbucket.org/haypo/astoptimizer/>`_ is an AST
 optimizer implementing various optimizations, but most interesting
-optimizations break the Python semantic (no guard is used to disable
+optimizations break the Python semantics (no guard is used to disable
 optimization if something changes).
 
 Issue #17515: `Add sys.setasthook() to allow to use a custom AST

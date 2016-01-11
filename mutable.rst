@@ -13,7 +13,7 @@ override builtin function, override class methods, modify "constants, etc.
 
 Most optimization rely on assumptions. For example, inlining rely on the fact
 that the inlined function is not modified. Implement optimization in respect of
-the Python semantic require to implement various assumptions.
+the Python semantics require to implement various assumptions.
 
 Builtin functions
 -----------------
@@ -162,7 +162,7 @@ Make strong assumptions, ignore changes
 ---------------------------------------
 
 If the optimizer is an opt-in options, users are aware that the optimizer
-can make some compromises on the Python semantic to implement more aggressive
+can make some compromises on the Python semantics to implement more aggressive
 optimizations.
 
 
