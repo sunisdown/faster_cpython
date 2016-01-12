@@ -16,7 +16,7 @@ PEP: API for AST transformers
 
 ::
 
-    PEP: xxx
+    PEP: 511
     Title: API for AST transformers
     Version: $Revision$
     Last-Modified: $Date$
