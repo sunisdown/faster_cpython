@@ -31,7 +31,10 @@ PEP: API for AST transformers
 Abstract
 ========
 
-Propose an API to support AST transformers.
+Propose an API to support AST transformers. Add ``-o OPTIM_TAG`` command
+line option to change ``.pyc`` filenames and raise an ``ImportError``
+exception on import if the ``.pyc`` file is missing and the AST
+transformers required to transform the code are missing.
 
 
 Rationale
@@ -45,23 +48,27 @@ builtin ``compile()`` function. There are even more options to
 hook a code transformer.
 
 Transforming the code allows to extend the Python language for specific
-needs. Transforming an Abstract Syntax Tree (AST) is a convenient way to
-implement an optimizer. It's easier to work on the AST than working on
-the bytecode, AST contains more information and is more high level.
+use cases. Transforming an Abstract Syntax Tree (AST) is a convenient
+way to implement an optimizer. It's easier to work on the AST than
+working on the bytecode, AST contains more information and is more high
+level.
 
 Python 3.6 optimizes the code using a peephole optimizer. By
 definition, a peephole optimizer has a narrow view of the code and so
 can only implement basic optimizations. The optimizer rewrites the
-bytecode. It is difficult to enhance because it written in C.
+bytecode. It is difficult to enhance it, because it written in C.
 
 This PEP proposes to add an API to register AST transformers.
 
-It will be possible to build a package of the transformed code: the
-transformation is done ahead of time. It allows to implement powerful
-but expensive transformations.
+A new ``-o OPTIM_TAG`` command line option is added to only load
+transformed code: it changes the name of searched ``.pyc`` files. If the
+``.pyc`` file of a module is missing and the ``.py`` is available, an
+``ImportError`` exception is raised import if the AST transformers
+required to transform the code are missing. The import behaviour with
+the default optimizer tag (``opt``) is unchanged.
 
-A new ``-o OPTIM_TAG`` command line option can be used to only load
-transformed code: it changes the name of searched ``.pyc`` files.
+The transformation can done ahead of time. It allows to implement
+powerful but expensive transformations.
 
 
 Use Cases
@@ -71,7 +78,7 @@ Interactive interpreter
 -----------------------
 
 It will be possible to use AST transformers with the interactive
-interpreter. It is popular in Python and commonly used to demonstrate
+interpreter which is popular in Python and commonly used to demonstrate
 Python.
 
 Build a transformed package
@@ -79,37 +86,45 @@ Build a transformed package
 
 It will be possible to build a package of the transformed code.
 
-The package filename must be different to be able to install the
-original package.
-
 A transformer can have a configuration. The configuration is not stored
-in the package. It is not possible to build two flavors of a package
-with two different configurations with different filenames. Only one
-package per combination of AST transformers can be build.
+in the package.
 
 All ``.pyc`` files of the package must be transformed with the same AST
-transformers and the same transformers configuration.
+transformers and the same transformers configuration. It is possible to
+build different ``.pyc`` files using different optimizer tags. Example:
+``fat`` for the default configuration and ``fat_inline`` with function
+inlining enabled.
+
+A package can contain ``.pyc`` files with different optimizer tags.
 
 
-Install a transformed package
------------------------------
+Install a package containing transformed .pyc files
+---------------------------------------------------
 
-It will be possible to install a package with specific
-transformations. For example, install the optimized package or install
-the regular package.
+It will be possible to install a package which contains transformed
+``.pyc`` files. All ``.pyc`` files contained in the package are
+installed.
 
 
-Run a transformed package
--------------------------
+Build .pyc files when installing a package
+------------------------------------------
 
-It will be possible to run a transformed package.
+If a package does not contain ``.pyc`` files of the current optimizer
+tag (or some ``.pyc`` files are missing), the ``.pyc`` are created
+during the installation.
 
-If a ``.pyc`` is missing and the required AST transformers are
-available, Python creates the missing ``.pyc`` files on demand.
+AST transformers of the optimizer tag are required. Otherwise, the
+installation fails with an error.
 
-If a ``.pyc`` is missing and at least one required AST transformer is
-missing, Python fails with an ``ImportError``. ``.py`` files are not
-used. ``.pyc`` files are not written nor modified.
+
+Execute transformed code
+------------------------
+
+It will be possible to execute transformed code.
+
+Raise an ``ImportError`` exception on import if the ``.pyc`` file of the
+current optimizer tag is missing and the AST transformers required to
+transform the code are missing.
 
 
 Changes
@@ -119,19 +134,17 @@ API to support AST transformers:
 
 * Add ``sys.ast_transformers``: list of callable with the prototype
   ``def ast_transformer(tree, filename)`` used to rewrite an AST tree.
-  The list of empty by default (no AST transformer). The transformer is
+  The list is empty by default (no AST transformer). The transformer is
   called after the creation of the AST by the parser and before the
   compilation to bytecode. It must return an AST tree. It can modify the
   AST tree in place, or create a new AST tree.
 * Add ``sys.implementation.ast_transformers``: name of registered AST
   transformers
-* Add ``sys.implementation.optim_tag``: optimization tag. It changes the
-  filename of ``.pyc`` filename. Example:
-
-  - ``Lib/__pycache__/os.cpython-36.pyc``: default filename
-  - ``Lib/__pycache__/os.cpython-36.fat-0.pyc``: with the optimization
-    tag ``"fat"``
-
+* Add ``sys.implementation.optim_tag``: optimization tag, default:
+  ``'opt'``.
+* Use the optimizer tag in ``.pyc`` filenames in ``importlib``.
+  Remove also the special case for the optimizer level ``0`` with the
+  default optimizer tag ``'opt'`` to simplify the code.
 * Add a new ``-o OPTIM_TAG`` command line option to set
   ``sys.implementation.optim_tag``
 
@@ -157,6 +170,35 @@ AST transformer changes:
 Example
 =======
 
+.pyc filenames
+--------------
+
+Example of ``.pyc`` filenames of the ``os`` module.
+
+With the default optimizer tag ``'opt'``:
+
+===========================   ==================
+.pyc filename                 Optimization level
+===========================   ==================
+``os.cpython-36.opt-0.pyc``                    0
+``os.cpython-36.opt-1.pyc``                    1
+``os.cpython-36.opt-2.pyc``                    2
+===========================   ==================
+
+With the ``'fat'`` optimizer tag:
+
+===========================   ==================
+.pyc filename                 Optimization level
+===========================   ==================
+``os.cpython-36.fat-0.pyc``                    0
+``os.cpython-36.fat-1.pyc``                    1
+``os.cpython-36.fat-2.pyc``                    2
+===========================   ==================
+
+
+AST transformer
+----------------
+
 Amazing AST transformer replacing all strings with ``"Ni! Ni! Ni!"``::
 
     import ast
@@ -173,6 +215,7 @@ Amazing AST transformer replacing all strings with ``"Ni! Ni! Ni!"``::
         KnightsWhoSayNi().visit(tree)
         return tree
 
+
     # first register the AST transformer
     sys.ast_transformers.append(ast_transformer)
     sys.implementation.ast_transformers.append('knights_who_say_ni')
@@ -180,7 +223,7 @@ Amazing AST transformer replacing all strings with ``"Ni! Ni! Ni!"``::
     # then update optimizer tag (used to build .pyc filenames)
     sys.implementation.optim_tag = 'knights_who_say_ni'
 
-    # run code which will be transformed by ast_transformer()
+    # execute code which will be transformed by ast_transformer()
     exec("print('Hello World!')")
 
 Output::
