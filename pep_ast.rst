@@ -8,7 +8,7 @@ PEP: API for AST transformers
 
 * PEP 509: :ref:`Add a private version to dict <pep-dict-version>`
 * PEP 510: :ref:`Specialized functions with guards <pep-specialize>`
-* PEP xxx: :ref:`API for AST transformers <pep-ast>`
+* PEP 511: :ref:`API for AST transformers <pep-ast>`
 
 .. warning::
    This PEP is a draft, please wait until it's published on python-ideas
