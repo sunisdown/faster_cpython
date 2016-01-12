@@ -237,7 +237,7 @@ Prior Art
 AST optimizers
 --------------
 
-In 2011, Eugene Toder proposes to rewrite some peephole optimizations in
+In 2011, Eugene Toder proposed to rewrite some peephole optimizations in
 a new AST optimizer: issue #11549, `Build-out an AST optimizer, moving
 some functionality out of the peephole optimizer
 <https://bugs.python.org/issue11549>`_.  The patch adds ``ast.Lit`` (it
