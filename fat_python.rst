@@ -65,6 +65,13 @@ The project was created in October 2015.
 See also the :ref:`AST optimizer <new-ast-optimizer>`.
 
 
+fat module
+==========
+
+The `fatpython GithHub project <https://github.com/haypo/fatpython>`_ now hosts
+the code of the ``fat`` module.
+
+
 Test FAT Python
 ===============
 
