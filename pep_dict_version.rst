@@ -10,5 +10,5 @@ PEP 509: Add a private version to dict
 * PEP 510: :ref:`Specialized functions with guards <pep-specialize>`
 * PEP 511: :ref:`API for AST transformers <pep-ast>`
 
-*Moved to python.org:* `PEP 509 -- Add
-dict.__version__ <https://www.python.org/dev/peps/pep-0509/>`_
+*Moved to python.org:* `PEP 509 -- Add a private version to dict
+<https://www.python.org/dev/peps/pep-0509/>`_
