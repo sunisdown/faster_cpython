@@ -48,6 +48,12 @@ Announcements and status reports:
   <https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>`_
   (Oct 2015)
 
+FAT Python PEPs:
+
+* PEP 509: `Add a private version to dict <https://www.python.org/dev/peps/pep-0509/>`_
+* PEP 510: `Specialized functions with guards <https://www.python.org/dev/peps/pep-0510/>`_
+* PEP 511: `API for AST transformers <https://www.python.org/dev/peps/pep-0511/>`_
+
 The project was created in October 2015.
 
 See also the :ref:`AST optimizer <new-ast-optimizer>`.
@@ -109,17 +115,11 @@ of these keys is modified, the specialized bytecode is simply removed (when the
 function is called) and the original bytecode is executed.
 
 
-Status, TODO and PEPs
-=====================
+TODO list
+=========
 
-For the current status and TODO tasks: see the `TODO.rst file
+See the `FAT Python TODO.rst file
 <https://hg.python.org/sandbox/fatpython/file/tip/TODO.rst>`_.
-
-FAT Python PEPs:
-
-* PEP 509: :ref:`Add a private version to dict <pep-dict-version>`
-* PEP 510: :ref:`Specialized functions with guards <pep-specialize>`
-* PEP 511: :ref:`API for AST transformers <pep-ast>`
 
 
 .. _fat-optim:
