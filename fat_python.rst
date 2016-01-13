@@ -68,8 +68,12 @@ See also the :ref:`AST optimizer <new-ast-optimizer>`.
 fat module
 ==========
 
-The `fatpython GithHub project <https://github.com/haypo/fatpython>`_ now hosts
-the code of the ``fat`` module.
+The ``fat`` module:
+
+* `fatpython GitHub project
+  <https://github.com/haypo/fatpython>`_
+* `fat module at the Python Cheeseshop (PyPI)
+  <https://pypi.python.org/pypi/fat>`_
 
 
 Test FAT Python
