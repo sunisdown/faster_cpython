@@ -70,8 +70,8 @@ fat module
 
 The ``fat`` module:
 
-* `fatpython GitHub project
-  <https://github.com/haypo/fatpython>`_
+* `fat module at GitHub
+  <https://github.com/haypo/fat>`_
 * `fat module at the Python Cheeseshop (PyPI)
   <https://pypi.python.org/pypi/fat>`_
 
