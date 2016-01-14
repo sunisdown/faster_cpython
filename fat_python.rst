@@ -35,6 +35,26 @@ it will use two versions of some functions where one version is specialised to
 specific argument types, a specific environment, optimized when builtins are
 not mocked, etc.
 
+The FAT Python project is made of multiple parts:
+
+* ``fat`` module: `fat project at GitHub <https://github.com/haypo/fat>`_.
+  C extension implementing different guards.
+* ``fatoptimizer`` module: `fatoptimizer project at GitHub
+  <https://github.com/haypo/fatoptimizer>`_. AST optimizer implementing
+  multiple optimizations and can specialize functions using guards of the
+  ``fat`` module. Optimized code depends on the ``fat`` module (if at
+  least one function was specialized).
+* Python 3.6 patched with the patches for the PEP 509 (dictionary versioning),
+  PEP 510 (specialize functions) and PEP 511 (AST transformers)
+
+The project was created in October 2015.
+
+See also the :ref:`AST optimizer <new-ast-optimizer>`.
+
+
+Status
+======
+
 FAT Python PEPs:
 
 * PEP 509: `Add a private version to dict
@@ -59,10 +79,6 @@ Announcements and status reports:
 * [python-ideas] `Add specialized bytecode with guards to functions
   <https://mail.python.org/pipermail/python-ideas/2015-October/036908.html>`_
   (Oct 2015)
-
-The project was created in October 2015.
-
-See also the :ref:`AST optimizer <new-ast-optimizer>`.
 
 
 fat module
