@@ -37,30 +37,35 @@ not mocked, etc.
 
 The FAT Python project is made of multiple parts:
 
-* ``fatoptimizer`` project: AST optimizer implementing multiple optimizations
-  and can specialize functions using guards of the ``fat`` module.
-* ``fat`` module: C extension implementing different guards.
-* Python 3.6 patched with the patches for the PEP 509 (dictionary versioning),
-  PEP 510 (specialize functions) and PEP 511 (AST transformers)
+* The ``fatoptimizer`` project is the static optimizer for Python 3.6 using
+  function specialization with guards. It is implemented as an AST optimizer.
+* The ``fat`` module is Python extension module (written in C) implementing
+  fast guards. The ``fatoptimizer`` optimizer uses ``fat`` guards to only use
+  the specialize bytecode under some conditions.
+* Patches for Python 3.6:
+
+  * `PEP 509: Add ma_version to PyDictObject
+    <https://bugs.python.org/issue26058>`_
+  * `PEP 510: Specialize functions with guards
+    <https://bugs.python.org/issue26098>`_
+  * `code.co_lnotab: use signed line number delta to support moving
+    instructions in an optimizer
+    <https://bugs.python.org/issue26107>`_
+  * `Add test.support.optim_args_from_interpreter_flags()
+    <https://bugs.python.org/issue26100>`_
+  * PEP 511 (AST transformers) patch (not available yet)
+
+* Python Enhancement Proposals (PEP):
+
+  * PEP 509: `Add a private version to dict
+    <https://www.python.org/dev/peps/pep-0509/>`_
+  * PEP 510: `Specialized functions with guards
+    <https://www.python.org/dev/peps/pep-0510/>`_
+  * PEP 511: `API for AST transformers
+    <https://www.python.org/dev/peps/pep-0511/>`_
 
 The documentation moved to the `fatoptimizer documentation
 <https://fatoptimizer.readthedocs.org/en/latest/>`_.
-
-
-The project was created in October 2015.
-
-
-Status
-======
-
-FAT Python PEPs:
-
-* PEP 509: `Add a private version to dict
-  <https://www.python.org/dev/peps/pep-0509/>`_
-* PEP 510: `Specialized functions with guards
-  <https://www.python.org/dev/peps/pep-0510/>`_
-* PEP 511: `API for AST transformers
-  <https://www.python.org/dev/peps/pep-0511/>`_
 
 Announcements and status reports:
 
@@ -110,14 +115,13 @@ Example
                   6 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
                   9 RETURN_VALUE
 
-    >>> len(func.get_specialized())
+    >>> import fat
+    >>> len(fat.get_specialized(func))
     1
-    >>> specialized=func.get_specialized()[0]
-    >>> dis.dis(specialized['code'])
+    >>> specialized_code = fat.get_specialized(func)[0][0]
+    >>> dis.dis(specialized_code['code'])
       2           0 LOAD_CONST               1 (3)
                   3 RETURN_VALUE
-    >>> len(specialized['guards'])
-    2
 
     >>> func()
     3
