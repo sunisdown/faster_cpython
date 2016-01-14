@@ -37,12 +37,15 @@ not mocked, etc.
 
 The FAT Python project is made of multiple parts:
 
-* `fatoptimizer project <https://fatoptimizer.readthedocs.org/en/latest/>`_:
-  AST optimizer implementing multiple optimizations and can specialize
-  functions using guards of the ``fat`` module.
-* :ref:`fat module <fat>`: C extension implementing different guards.
+* ``fatoptimizer`` project: AST optimizer implementing multiple optimizations
+  and can specialize functions using guards of the ``fat`` module.
+* ``fat`` module: C extension implementing different guards.
 * Python 3.6 patched with the patches for the PEP 509 (dictionary versioning),
   PEP 510 (specialize functions) and PEP 511 (AST transformers)
+
+The documentation moved to the `fatoptimizer documentation
+<https://fatoptimizer.readthedocs.org/en/latest/>`_.
+
 
 The project was created in October 2015.
 

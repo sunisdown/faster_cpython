@@ -15,8 +15,8 @@ Faster Python implementations
   and `Hotpy 2 <https://bitbucket.org/markshannon/hotpy_2>`_,
   based on `GVMT <http://code.google.com/p/gvmt/>`_ (Glasgow Virtual
   Machine Toolkit)
-* `numba
-  <https://github.com/numba/numba>`_
+* `Numba <http://numba.pydata.org/>`_: JIT implemented with LLVM, specialized
+  to numeric types (numpy)
 * `pymothoa <http://code.google.com/p/pymothoa/>`_ uses LLVM
   ("don't support classes nor exceptions")
 * `WPython <http://code.google.com/p/wpython/>`_: 16-bit word-codes instead of byte-codes
@@ -47,7 +47,6 @@ Fully Python compliant
 Other
 -----
 
-* `Numba <http://numba.pydata.org/>`_: JIT implemented with LLVM, specialized to numeric types (numpy)
 * Replace stack-based bytecode with register-based bytecode: old registervm
   project
 
