@@ -2,6 +2,9 @@
 Optimizations
 *************
 
+See also `fatoptimizer optimizations
+<https://fatoptimizer.readthedocs.org/en/latest/optimizations.html>`_.
+
 Inline function calls
 =====================
 
@@ -35,6 +38,13 @@ Links:
 
 * `Issue #10399 <http://bugs.python.org/issue10399>`_:
   AST Optimization: inlining of function calls
+
+
+CALL_METHOD
+===========
+
+See `issue #26110: Speedup method calls 1.2x
+<https://bugs.python.org/issue26110>`_
 
 
 Move invariants out of the loop
