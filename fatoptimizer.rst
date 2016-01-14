@@ -1,11 +1,85 @@
-.. _new-ast-optimizer:
+.. _fatoptimizer:
 
-+++++++++++++++++
-New AST Optimizer
-+++++++++++++++++
+++++++++++++
+fatoptimizer
+++++++++++++
 
-The :ref:`FAT Python <fat-python>` projects comes with a new :ref:`AST optimizer
-<ast-optimizers>` project.
+:ref:`FAT Python <fat-python>` is a static optimizer for Python 3.6 using
+function specialization with guards.
+
+The :ref:`fat module <fat>` is the runtime part of the optimizer. It is
+required to run optimized code. The optimizer is the ``fatoptimizer`` module.
+
+* `fatoptimizer project at GitHub
+  <https://github.com/haypo/fatoptimizer>`_
+* `fatoptimizer project at the Python Cheeseshop (PyPI)
+  <https://pypi.python.org/pypi/fatoptimizer>`_
+
+
+fatoptimizer module API
+=======================
+
+.. warning::
+   The API is not stable yet.
+
+
+.. function:: optimize(tree, filename, config)
+
+   Optimize an AST tree. Return the optimized AST tree.
+
+
+.. class:: Config
+
+   Configuration of the optimizer.
+
+
+.. class:: OptimizerError
+
+   Exception raised on bugs in the optimizer.
+
+
+Installation
+============
+
+fatoptimizer requires Python 3.6 patched with the PEP 511 (ast.Constant,
+sys.ast_tranformers).
+
+Type::
+
+    pip install fatoptimizer
+
+Manual installation::
+
+    python3.6 setup.py install
+
+
+Run tests
+=========
+
+Type::
+
+    tox
+
+You may need to install or update tox::
+
+    pip3 install -U tox
+
+Run manually tests::
+
+    python3 test_fatoptimizer.py
+
+There are also integration tests which requires a Python 3.6 with patches PEP
+509, PEP 510 and PEP 511. Run integration tests::
+
+    python3.6 -X fat test_fat_config.py
+    python3.6 -X fat test_fat_size.py
+
+
+Changelog
+=========
+
+* 2016-01-14: First public release.
+
 
 Constants
 =========
@@ -35,7 +109,7 @@ Supported literal types:
 * containers: ``list``, ``dict``, ``set``
 
 
-.. _new-ast-optimizer-limits:
+.. _fatoptimizer-limits:
 
 Limitations
 ===========
@@ -43,29 +117,8 @@ Limitations
 * Decorators are not supported (yet?)
 * Keywords are not supported yet
 
-See also the `FAT Python TODO file
-<https://hg.python.org/sandbox/fatpython/file/tip/TODO.rst>`_.
-
-
-Implementation
-==============
-
-Files:
-
-* Lib/astoptimizer.py
-* Lib/test/test_astoptimizer.py
-* Python/sysmodule.c: add sys.asthook
-* Parser/Python.asdl: add ast.Constant
-* PyParser_ASTFromStringObject() calls call_ast_hook()
-
-Other changes:
-
-* Lib/site.py: enable the AST optimizer in FAT mode
-
-Different .pyc filename:
-
-* Lib/__pycache__/os.cpython-36.pyc: default mode
-* Lib/__pycache__/os.cpython-36.fat-0.pyc: FAT mode
+See also the `fatoptimizer TODO file
+<https://github.com/haypo/fatoptimizer/blob/master/TODO.rst>`_.
 
 
 FunctionOptimizer

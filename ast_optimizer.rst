@@ -22,7 +22,7 @@ See :ref:`old AST optimizer <old-ast-optimizer>`.
 New AST optimizer combined with FAT Python
 ==========================================
 
-See :ref:`new AST optimizer <new-ast-optimizer>`.
+See :ref:`fatoptimizer of FAT Python <fatoptimizer>`.
 
 
 pythran AST

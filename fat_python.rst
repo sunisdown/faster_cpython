@@ -37,8 +37,7 @@ not mocked, etc.
 
 The FAT Python project is made of multiple parts:
 
-* ``fat`` module: `fat project at GitHub <https://github.com/haypo/fat>`_.
-  C extension implementing different guards.
+* :ref:`fat module <fat>`: C extension implementing different guards.
 * ``fatoptimizer`` module: `fatoptimizer project at GitHub
   <https://github.com/haypo/fatoptimizer>`_. AST optimizer implementing
   multiple optimizations and can specialize functions using guards of the
@@ -49,7 +48,7 @@ The FAT Python project is made of multiple parts:
 
 The project was created in October 2015.
 
-See also the :ref:`AST optimizer <new-ast-optimizer>`.
+See also the :ref:`AST optimizer <fatoptimizer>`.
 
 
 Status
@@ -850,7 +849,7 @@ Possible worse performance:
 Limitations of the AST optimizer
 --------------------------------
 
-See :ref:`Limitations of the AST optimizer <new-ast-optimizer-limits>`.
+See :ref:`Limitations of the AST optimizer <fatoptimizer-limits>`.
 
 
 Goals
@@ -990,7 +989,7 @@ Other changes:
 * Python/sysmodule.c: add sys.flags.fat
 * Modules/main.c: add -F command line option
 
-See also the :ref:`AST optimizer <new-ast-optimizer>`.
+See also the :ref:`fatoptimizer <fatoptimizer>`.
 
 
 Possible optimizations
@@ -1050,41 +1049,6 @@ Example of function with side effect::
         s = x + y
         _last_sum = s
         return s
-
-
-FAT Python API
-==============
-
-* func.specialize(bytecode[, guards: list]): add a specialized bytecode.
-  If bytecode is a function, uses its __code__ attribute.
-  Guards a list of dict, syntax of one guard:
-
-  - ``{'guard_type': 'func', 'func': func2}``:
-    guard on func2.__code__
-  - ``{'guard_type': 'dict', 'dict': ns, 'keys': (key,)}``:
-    guard on the versionned dictionary ns[key]
-  - ``{'guard_type': 'builtins', 'names': ('len',)}``:
-    guard on builtins.len (``builtins.__dict__['len']``) and
-    ``globals()['len']``. The specialization is ignored if
-    builtins.__dict__['len'] was replaced after the end of Python
-    initialization or if globals()['len'] already exists.
-  - ``{'guard_type': 'globals', 'names': ('obj',)}``:
-    guard on globals()['obj']
-  - ``{'guard_type': 'type_dict', 'type': MyClass, 'keys': ('attr',)}``:
-    guard on MyClass.attr (on ``MyClass.__dict__['attr']``)
-  - ``{'guard_type': 'arg_type', 'arg_index': 0, 'arg_types': (str,)}``:
-    type of the function argument 0 must be ``str``.
-
-* func.get_specialized()
-
-For dictionary and function guards: specialized functions are removed if the
-guards fail:
-
-* Broken weak-reference to the dictionary/function
-* The dictionary key was modified (created, modified or removed depending on
-  the initial state)
-* The function was modified
-* An error occurred when getting the dictionary entry to get the key version
 
 
 Origins of FAT Python

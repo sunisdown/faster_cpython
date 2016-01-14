@@ -13,7 +13,8 @@ Contents:
    bytecode.rst
    c_api.rst
    ast_optimizer.rst
-   new_ast_optimizer.rst
+   fat.rst
+   fatoptimizer.rst
    old_ast_optimizer.rst
    registervm.rst
    readonly.rst
