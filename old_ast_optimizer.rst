@@ -22,7 +22,7 @@ Threads on the Python-Dev mailing list:
   many optimizations broke the Python semantic
 
 The project was created in September 2012. It is now dead and replaced with the
-:ref:`new AST optimizer <new-ast-optimizer>`.
+fatoptimizer project.
 
 
 Introduction

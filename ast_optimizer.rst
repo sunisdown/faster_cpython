@@ -19,10 +19,12 @@ Old AST optimizer project
 See :ref:`old AST optimizer <old-ast-optimizer>`.
 
 
-New AST optimizer combined with FAT Python
-==========================================
+fatoptimizer
+============
 
-See :ref:`fatoptimizer of FAT Python <fatoptimizer>`.
+`fatoptimizer project <https://fatoptimizer.readthedocs.org/en/latest/>`_: AST
+optimizer implementing multiple optimizations and can specialize functions
+using guards of the ``fat`` module.
 
 
 pythran AST

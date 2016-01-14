@@ -10,8 +10,8 @@ function specialization with guards.
 The ``fat`` module is the runtime part of the optimizer. It implements guards
 used to specialize functions.
 
-The ``fat`` module is required to run code optimized by the :ref:`fatoptimizer
-module <fatoptimizer>`.
+The ``fat`` module is required to run code optimized by the ``fatoptimizer``
+module.
 
 * `fat project at GitHub
   <https://github.com/haypo/fat>`_

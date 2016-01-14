@@ -133,7 +133,7 @@ Propagate constant values of variables. Example:
 |       return y |       return 1       |
 +----------------+----------------------+
 
-FAT Python implements :ref:`constant propagation <fat-const-prop>`.
+Implemented in fatoptimizer.
 
 Read also the `Wikipedia article on copy propagation
 <https://en.wikipedia.org/wiki/Copy_propagation>`_.
@@ -156,8 +156,8 @@ operations (a+b, a-b, a*b, etc.) are computed. Example:
 |       return 1 + 1 |       return 2   |
 +--------------------+------------------+
 
-Implemented in :ref:`FAT Python <fat-const-fold>` and the :ref:`CPython
-peephole optimizer <cpython-peephole>`.
+Implemented in fatoptimizer and the :ref:`CPython peephole optimizer
+<cpython-peephole>`.
 
 See also
 
@@ -210,7 +210,7 @@ Combined with other optimizations, the code can be simplified to::
     i = 3
     print('3')
 
-FAT Python implements :ref:`loop unrolling <fat-loop-unroll>`.
+Implemented in fatoptimizer
 
 Read also the `Wikipedia article on loop unrolling
 <https://en.wikipedia.org/wiki/Loop_unrolling>`_.
@@ -223,8 +223,8 @@ Dead code elimination
 * Replace ``if 0: code`` with ``pass``
 * ``if DEBUG: print("debug")`` where ``DEBUG`` is known to be False
 
-Implemented in the :ref:`CPython peephole optimizer <cpython-peephole>`
-and :ref:`FAT Python <fat-dead-code>`.
+Implemented in fatoptimizer and the :ref:`CPython peephole optimizer
+<cpython-peephole>`.
 
 See also `Wikipedia Dead code elimination article
 <https://en.wikipedia.org/wiki/Dead_code_elimination>`_.
@@ -252,8 +252,8 @@ Become::
 
 Useful if ``hello()`` is compiled to C code.
 
-FAT Python implements a :ref:`copy builtins to constants optimization
-<fat-copy-builtin-to-constant>`.
+fatoptimizer implements a "copy builtins to constants optimization"
+optimization.
 
 
 Don't create Python frames
