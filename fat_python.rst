@@ -62,7 +62,8 @@ The FAT Python project is made of multiple parts:
       <https://bugs.python.org/issue26107>`_
     * `PEP 511: Add sys.set_code_transformers()
       <http://bugs.python.org/issue26145>`_
-    * ast.Constant patch (not available yet)
+    * `PEP 511: Add ast.Constant to allow AST optimizer to emit constants
+      <http://bugs.python.org/issue26146>`_
 
   * Somehow related to the PEP 511:
 
