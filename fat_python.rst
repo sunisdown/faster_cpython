@@ -48,12 +48,23 @@ The FAT Python project is made of multiple parts:
     <https://bugs.python.org/issue26058>`_
   * `PEP 510: Specialize functions with guards
     <https://bugs.python.org/issue26098>`_
-  * `code.co_lnotab: use signed line number delta to support moving
-    instructions in an optimizer
-    <https://bugs.python.org/issue26107>`_
-  * `Add test.support.optim_args_from_interpreter_flags()
-    <https://bugs.python.org/issue26100>`_
-  * PEP 511 (AST transformers) patch (not available yet)
+  * PEP 511 patches:
+
+    * `PEP 511: Add test.support.optim_args_from_interpreter_flags()
+      <https://bugs.python.org/issue26100>`_
+    * `PEP 511: code.co_lnotab: use signed line number delta to support moving
+      instructions in an optimizer
+      <https://bugs.python.org/issue26107>`_
+    * `PEP 511: Add sys.set_code_transformers()
+      <http://bugs.python.org/issue26145>`_
+    * ast.Constant patch (not available yet)
+
+  * Somehow related to the PEP 511:
+
+    * `Lib/test/test_compileall.py fails when run directly
+      <http://bugs.python.org/issue26101>`_
+    * `site ignores ImportError when running sitecustomize and usercustomize
+      <http://bugs.python.org/issue26099>`_
 
 * Python Enhancement Proposals (PEP):
 
@@ -91,14 +102,24 @@ Download FAT Python with::
 
     hg clone http://hg.python.org/sandbox/fatpython
 
-Compile it and run tests::
+Compile it::
 
-    ./configure && make && ./python -m test test_astoptimizer test_fat
+    ./configure && make
 
-Benchmark::
+Run the full Python test suite::
 
-    ./python bench.py
-    ./python -F bench.py
+    ./python -X fat -m test -j0
+
+To use specialized code without registered fatoptimizer, first you
+have to compile (and optimized) the stdlib::
+
+    ./python -X fat -m compileall
+
+Then you can use the optimized stdlib without fatoptimizer::
+
+    ./python -o fat
+    # enjoy!
+
 
 Example
 =======
