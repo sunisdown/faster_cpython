@@ -35,13 +35,18 @@ it will use two versions of some functions where one version is specialised to
 specific argument types, a specific environment, optimized when builtins are
 not mocked, etc.
 
+See the `fatoptimizer documentation <https://fatoptimizer.readthedocs.org/>`_
+which is the main part of FAT Python.
+
 The FAT Python project is made of multiple parts:
 
-* The ``fatoptimizer`` project is the static optimizer for Python 3.6 using
-  function specialization with guards. It is implemented as an AST optimizer.
-* The ``fat`` module is Python extension module (written in C) implementing
-  fast guards. The ``fatoptimizer`` optimizer uses ``fat`` guards to only use
-  the specialize bytecode under some conditions.
+* The `fatoptimizer project <https://fatoptimizer.readthedocs.org/>`_ is the
+  static optimizer for Python 3.6 using function specialization with guards. It
+  is implemented as an AST optimizer.
+* The `fat module <https://fatoptimizer.readthedocs.org/en/latest/fat.html>`_
+  is Python extension module (written in C) implementing fast guards. The
+  ``fatoptimizer`` optimizer uses ``fat`` guards to only use the specialize
+  bytecode under some conditions.
 * Patches for Python 3.6:
 
   * `PEP 509: Add ma_version to PyDictObject
@@ -74,9 +79,6 @@ The FAT Python project is made of multiple parts:
     <https://www.python.org/dev/peps/pep-0510/>`_
   * PEP 511: `API for AST transformers
     <https://www.python.org/dev/peps/pep-0511/>`_
-
-The documentation moved to the `fatoptimizer documentation
-<https://fatoptimizer.readthedocs.org/en/latest/>`_.
 
 Announcements and status reports:
 
