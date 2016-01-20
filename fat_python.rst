@@ -55,9 +55,9 @@ The FAT Python project is made of multiple parts:
     <https://bugs.python.org/issue26098>`_
   * PEP 511 patches:
 
-    * `PEP 511: Add test.support.optim_args_from_interpreter_flags()
+    * *DONE*: `PEP 511: Add test.support.optim_args_from_interpreter_flags()
       <https://bugs.python.org/issue26100>`_
-    * `PEP 511: code.co_lnotab: use signed line number delta to support moving
+    * *DONE*: `PEP 511: code.co_lnotab: use signed line number delta to support moving
       instructions in an optimizer
       <https://bugs.python.org/issue26107>`_
     * `PEP 511: Add sys.set_code_transformers()
@@ -67,7 +67,7 @@ The FAT Python project is made of multiple parts:
 
   * Somehow related to the PEP 511:
 
-    * `Lib/test/test_compileall.py fails when run directly
+    * *DONE*: `Lib/test/test_compileall.py fails when run directly
       <http://bugs.python.org/issue26101>`_
     * `site ignores ImportError when running sitecustomize and usercustomize
       <http://bugs.python.org/issue26099>`_
