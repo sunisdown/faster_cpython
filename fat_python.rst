@@ -71,6 +71,8 @@ The FAT Python project is made of multiple parts:
       <http://bugs.python.org/issue26101>`_
     * `site ignores ImportError when running sitecustomize and usercustomize
       <http://bugs.python.org/issue26099>`_
+    * `lambdas on the same line may incorrectly share code objects
+      <http://bugs.python.org/issue25843>`_
 
 * Python Enhancement Proposals (PEP):
 
