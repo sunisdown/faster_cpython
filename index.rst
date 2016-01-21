@@ -25,4 +25,5 @@ Contents:
    pep_specialize.rst
    pep_ast.rst
    pypy.rst
+   talks.rst
    links.rst
