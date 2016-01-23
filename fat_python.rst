@@ -69,9 +69,9 @@ The FAT Python project is made of multiple parts:
 
     * *DONE*: `Lib/test/test_compileall.py fails when run directly
       <http://bugs.python.org/issue26101>`_
-    * `site ignores ImportError when running sitecustomize and usercustomize
+    * *DONE*: `site ignores ImportError when running sitecustomize and usercustomize
       <http://bugs.python.org/issue26099>`_
-    * `lambdas on the same line may incorrectly share code objects
+    * *DONE*: `code_richcompare() don't use constant type when comparing code constants
       <http://bugs.python.org/issue25843>`_
 
 * Python Enhancement Proposals (PEP):
