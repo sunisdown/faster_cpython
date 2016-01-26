@@ -119,7 +119,7 @@ Getting started::
     # enjoy!
 
 The `fatoptimizer project <https://fatoptimizer.readthedocs.org/>`_ needs the
-most love. Currently, the optimizer is not really smarty. There is a long `TODO
+most love. Currently, the optimizer is not really smart. There is a long `TODO
 list <https://fatoptimizer.readthedocs.org/en/latest/todo.html>`_. Pick a
 simple optimization, try to implement it, send a pull request on GitHub. At
 least, any kind of feedback is useful ;-)
