@@ -97,6 +97,44 @@ Announcements and status reports:
   (Oct 2015)
 
 
+How can you contribute?
+=======================
+
+Getting started::
+
+    hg clone http://hg.python.org/sandbox/fatpython
+    cd fatpython
+    ./configure --with-pydebug CFLAGS="-O0" && make
+
+    git clone https://github.com/haypo/fat
+    cd fat
+    ../python setup.py build
+    cp -v build/lib*/fat.*so ../Lib
+    cd ..
+
+    git clone https://github.com/haypo/fatoptimizer
+    (cd Lib; ln -s ../fatoptimizer/fatoptimizer .)
+
+The `fatoptimizer project <https://fatoptimizer.readthedocs.org/>`_ needs the
+most love. Currently, the optimizer is not really smarty. There is a long `TODO
+list <https://fatoptimizer.readthedocs.org/en/latest/todo.html>`_. Pick a
+simple optimization, try to implement it, send a pull request on GitHub. At
+least, any kind of feedback is useful ;-)
+
+If you know the C API of Python, you may also review the implementation of the
+PEPs:
+
+* `PEP 509: Add ma_version to PyDictObject
+  <https://bugs.python.org/issue26058>`_
+* `PEP 510: Specialize functions with guards
+  <https://bugs.python.org/issue26098>`_
+* `PEP 511: Add sys.set_code_transformers()
+  <http://bugs.python.org/issue26145>`_
+
+But these PEPs are still work-in-progress, so the implementation can still
+change.
+
+
 Test FAT Python
 ===============
 
