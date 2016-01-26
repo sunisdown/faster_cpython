@@ -14,12 +14,16 @@ builtin ``len()`` function was not overriden.
 
 Threads on the Python-Dev mailing list:
 
-* `AST optimizer implemented in Python
-  <https://mail.python.org/pipermail/python-dev/2012-August/121286.html>`_.
+* `astoptimizer: static optimizer working on the AST
+  <https://mail.python.org/pipermail/python-dev/2013-March/124954.html>`_
+  (March 2013)
 * `Release of astoptimizer 0.3
-  <https://mail.python.org/pipermail/python-dev/2012-September/121647.html>`_:
-  Guido van Rossum, Nick Coghlan and Maciej Fijalkowski complained that too
-  many optimizations broke the Python semantic
+  <https://mail.python.org/pipermail/python-dev/2012-September/121647.html>`_
+  (September 2012): Guido van Rossum, Nick Coghlan and Maciej Fijalkowski
+  complained that too many optimizations broke the Python semantics
+* `AST optimizer implemented in Python
+  <https://mail.python.org/pipermail/python-dev/2012-August/121286.html>`_
+  (August 2012)
 
 The project was created in September 2012. It is now dead and replaced with the
 fatoptimizer project.
