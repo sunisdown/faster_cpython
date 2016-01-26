@@ -115,6 +115,9 @@ Getting started::
     git clone https://github.com/haypo/fatoptimizer
     (cd Lib; ln -s ../fatoptimizer/fatoptimizer .)
 
+    ./python -X fat
+    # enjoy!
+
 The `fatoptimizer project <https://fatoptimizer.readthedocs.org/>`_ needs the
 most love. Currently, the optimizer is not really smarty. There is a long `TODO
 list <https://fatoptimizer.readthedocs.org/en/latest/todo.html>`_. Pick a
