@@ -44,9 +44,21 @@ The FAT Python project is made of multiple parts:
   static optimizer for Python 3.6 using function specialization with guards. It
   is implemented as an AST optimizer.
 * The `fat module <https://fatoptimizer.readthedocs.org/en/latest/fat.html>`_
-  is Python extension module (written in C) implementing fast guards. The
-  ``fatoptimizer`` optimizer uses ``fat`` guards to only use the specialize
-  bytecode under some conditions.
+  is a Python extension module (written in C) implementing fast guards. The
+  ``fatoptimizer`` optimizer uses ``fat`` guards to specialize functions.
+  ``fat`` guards are used to verify assumptions used to specialize the code. If
+  an assumption is no more true, the specialized code is not used. The ``fat``
+  module is required to run code optimized by ``fatoptimizer`` if at least one
+  function is specialized.
+* Python Enhancement Proposals (PEP):
+
+  * PEP 509: `Add a private version to dict
+    <https://www.python.org/dev/peps/pep-0509/>`_
+  * PEP 510: `Specialized functions with guards
+    <https://www.python.org/dev/peps/pep-0510/>`_
+  * PEP 511: `API for AST transformers
+    <https://www.python.org/dev/peps/pep-0511/>`_
+
 * Patches for Python 3.6:
 
   * `PEP 509: Add ma_version to PyDictObject
@@ -71,17 +83,10 @@ The FAT Python project is made of multiple parts:
     * *DONE*: `code_richcompare() don't use constant type when comparing code constants
       <http://bugs.python.org/issue25843>`_
 
-* Python Enhancement Proposals (PEP):
-
-  * PEP 509: `Add a private version to dict
-    <https://www.python.org/dev/peps/pep-0509/>`_
-  * PEP 510: `Specialized functions with guards
-    <https://www.python.org/dev/peps/pep-0510/>`_
-  * PEP 511: `API for AST transformers
-    <https://www.python.org/dev/peps/pep-0511/>`_
-
 Announcements and status reports:
 
+* `Status of the FAT Python project, January 12, 2016
+  <https://haypo.github.io/fat-python-status-janv12-2016.html>`_
 * `'FAT' and fast: What's next for Python
   <http://www.infoworld.com/article/3020450/application-development/fat-fast-whats-next-for-python.html>`_:
   Article of InfoWorld by Serdar Yegulalp (January 11, 2016)
