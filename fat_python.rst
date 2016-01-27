@@ -102,14 +102,18 @@ Announcements and status reports:
   (Oct 2015)
 
 
-How can you contribute?
-=======================
+.. _fat-getting-starting:
 
-Getting started::
+Getting started
+===============
+
+Compile Python 3.6 patched with PEP 509, PEP 510 and PEP 511::
 
     hg clone http://hg.python.org/sandbox/fatpython
     cd fatpython
     ./configure --with-pydebug CFLAGS="-O0" && make
+
+Install fat::
 
     git clone https://github.com/haypo/fat
     cd fat
@@ -117,11 +121,28 @@ Getting started::
     cp -v build/lib*/fat.*so ../Lib
     cd ..
 
+Install fatoptimizer::
+
     git clone https://github.com/haypo/fatoptimizer
     (cd Lib; ln -s ../fatoptimizer/fatoptimizer .)
 
-    ./python -X fat
-    # enjoy!
+``fatoptimizer`` is registed by the ``site`` module if ``-X fat`` command line
+option is used. Extract of ``Lib/site.py``::
+
+    if 'fat' in sys._xoptions:
+        import fatoptimizer
+        fatoptimizer._register()
+
+Check that fatoptimizer is registered with::
+
+    $ ./python -X fat -c 'import sys; print(sys.implementation.optim_tag)'
+    fat-opt
+
+You must get ``fat-opt`` (and not ``opt``).
+
+
+How can you contribute?
+=======================
 
 The `fatoptimizer project <https://fatoptimizer.readthedocs.org/>`_ needs the
 most love. Currently, the optimizer is not really smart. There is a long `TODO
@@ -143,94 +164,104 @@ But these PEPs are still work-in-progress, so the implementation can still
 change.
 
 
-Test FAT Python
-===============
+Play with FAT Python
+====================
 
-Download FAT Python with::
-
-    hg clone http://hg.python.org/sandbox/fatpython
-
-Compile it::
-
-    ./configure && make
-
-Run the full Python test suite::
-
-    ./python -X fat -m test -j0
-
-To use specialized code without registered fatoptimizer, first you
-have to compile (and optimized) the stdlib::
-
-    ./python -X fat -m compileall
-
-Then you can use the optimized stdlib without fatoptimizer::
-
-    ./python -o fat
-    # enjoy!
+See :ref:`Getting started <fat-getting-starting>` to compile FAT Python.
 
 
-Example
-=======
+Disable peephole optimizer
+--------------------------
 
-::
+The ``-o noopt`` command line option disables the Python peephole optimizer::
 
-    >>> def func():
-    ...     return len("abc")
+    $ ./python -o noopt -c 'import dis; dis.dis(compile("1+1", "test", "exec"))'
+      1           0 LOAD_CONST               0 (1)
+                  3 LOAD_CONST               0 (1)
+                  6 BINARY_ADD
+                  7 POP_TOP
+                  8 LOAD_CONST               1 (None)
+                 11 RETURN_VALUE
+
+
+Specialized code calling builtin function
+-----------------------------------------
+
+Test fatoptimizer on builtin function::
+
+    $ ./python -X fat
+    >>> def func(): return len("abc")
     ...
+
     >>> import dis
     >>> dis.dis(func)
-      2           0 LOAD_GLOBAL              0 (len)
+      1           0 LOAD_GLOBAL              0 (len)
                   3 LOAD_CONST               1 ('abc')
                   6 CALL_FUNCTION            1 (1 positional, 0 keyword pair)
                   9 RETURN_VALUE
 
     >>> import fat
-    >>> len(fat.get_specialized(func))
-    1
-    >>> specialized_code = fat.get_specialized(func)[0][0]
-    >>> dis.dis(specialized_code['code'])
-      2           0 LOAD_CONST               1 (3)
+    >>> fat.get_specialized(func)
+    [(<code object func at 0x7f9d3155b1e0, file "<stdin>", line 1>,
+    [<fat.GuardBuiltins object at 0x7f9d39191198>])]
+
+    >>> dis.dis(fat.get_specialized(func)[0][0])
+      1           0 LOAD_CONST               1 (3)
                   3 RETURN_VALUE
 
-    >>> func()
-    3
+The specialized code is removed when the function is called if the builtin
+function is replaced (here by declaring a ``len()`` function in the global
+namespace)::
 
     >>> len=lambda obj: "mock"
     >>> func()
     'mock'
-    >>> func.get_specialized()
+    >>> fat.func_get_specialized(func)
     []
 
-The function ``func()`` has specialized bytecode which returns directly 3
-instead of calling ``len("abc")``. The specialized bytecode has two guards
-dictionary keys: ``builtins.__dict__['len']`` and ``globals()['len']``. If one
-of these keys is modified, the specialized bytecode is simply removed (when the
-function is called) and the original bytecode is executed.
+
+Microbenchmark
+--------------
+
+Run a microbenchmark on specialized code::
+
+    $ ./python -m timeit -s 'def f(): return len("abc")' 'f()'
+    10000000 loops, best of 3: 0.122 usec per loop
+
+    $ ./python -X fat -m timeit -s 'def f(): return len("abc")' 'f()'
+    10000000 loops, best of 3: 0.0932 usec per loop
+
+Python must be optimized to run a benchmark: use ``./configure && make clean &&
+make`` if you previsouly compiled it in debug mode.
+
+You should compare specialized code to an unpatched Python 3.6 to run a fair
+benchmark (to also measure the overhead of PEP 509, 510 and 511 patches).
 
 
-Goals
-=====
+Run optimized code without registering fatoptimizer
+===================================================
 
-Goals:
+You have to compile optimized .pyc files::
 
-* *no* overhead when FAT mode is disabled (default). The FAT mode must remain
-  optional.
-* Faster than current CPython on real applications like Django or Mercurial.
-  5% faster would be nice, 10% would be better.
-* 100% compatible with CPython and the Python language: everything must be kept
-  mutable. Optimizations are disabled when the environment is modified.
-* 100% compatible with the CPython C API: ABI and C structures must not be
-  modified.
-* Add a generic API to support "specialized" functions.
+    # the optimizer is slow, so add -v to enable fatoptimizer logs for more fun
+    ./python -X fat -v -m compileall
 
-Non-goal:
+    # why does compileall not compile encodings/*.py?
+    ./python -X fat -m py_compile Lib/encodings/{__init__,aliases,latin_1,utf_8}.py
 
-* FAT Python doesn't modify the Python C API: don't expect better memory
-  footprint with specialized types, like PyPy list of integers stored
-  as a real array of C int in memory.
-* FAT Python is not a JIT. Don't expected crazy performances as PyPy, Numba or
-  Pyston. PyPy must remain the fastest implementation of Python, 100%
-  compatible with CPython!
+
+Finally, enjoy optimized code with no registered optimized::
+
+    $ ./python -o fat-opt -c 'import sys; print(sys.implementation.optim_tag, sys.get_code_transformers())'
+    fat-opt []
+
+Remember that you cannot import .py files in this case, only .pyc::
+
+    $ echo 'print("Hello World!")' > hello.py
+    $ ENV/bin/python -o fat-opt -c 'import hello'
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+    ImportError: missing AST transformers for 'hello.py': optim_tag='fat-opt', transformers tag='noopt'
 
 
 Origins of FAT Python
